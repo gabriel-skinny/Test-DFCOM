@@ -32,12 +32,13 @@ O novo sistema deve:
 Serviços:
 
 - Event-Service: Serviço para mostrar, cadastrar, editar eventos e seus ingressos
-- Booking-Service: Serviço para lidar com a compra e venda de ingressos
+- Order-Service: Serviço para lidar com a compra e venda de ingressos
 - Payment-Service: Serviço para lidar com os pagamentos
 - Dashboard-Service: Serviço para mostrar o dashboard para administradores e alterar preços dos tickets
 
 Comunicação entre serviços:
 
+- Fila: Sqs
 - Message Broker: Kafka
 
 Databases
@@ -46,7 +47,7 @@ Databases
 - Event Database: MongoDb
 - Booking Database: MongoDb
 - Payment Database: MongoDb
-- Dashboard Database: Mysql e replica dos 3 databases acima.
+- Dashboard Database: Mysql e replica dos 3 databases acima atualizado em RealTime com Kafka Connect.
 
 ### Numeros do negocio
 
@@ -88,7 +89,7 @@ Requisitos:
 - Criar instancias dos serviços conforme aumente a demanda e colocar um NGNIX como LoadBalancer para decidir qual serviço lidará com a requisição
 - Executar as regras de negocio de modo assincrono, não deixando travar as requisições por processamentos que não precisam ser retornados em realtime.
 - Habilitar autoescalling do MongoDb para criar mais nós conforma a demanda
-- Podemos fazer uma estrategia de Shardring do database para criar um novo database a cada 50 eventos. Isso melhorará muito a performance da aplicação. Já que não precisamos pegar dados de eventos antigos e eles pararão de atarapalhar a performance da aplicação. Podemos até criar um database dedicado para um evento muito grande
+- Podemos fazer uma estrategia de replicar os dados para um banco de dados de Histórico e deixar o banco da aplicação apenas com os eventos que estão ativos, isso melhorará muito a performance da aplicação.
 - Habilita autoescalling no kafka para criar mais nós conforme a demanda
 - Salvar em cache todas as requisições GET para pegar detalhes do evento para aliviar o banco de dados nos reads
 
@@ -100,88 +101,94 @@ Cache: Redis
 
 #### Requisitar compra de ticket
 
-- Cliente: HTTP
-- Api: requestBuyTicket(ticketId)
+- Service: Event-Service
+- Cliente: Http
+- Api: requestBuyTicket
+
   - Verifica se o ticket existe e está disponivel no Event-Service
+  - Envia o ticketId para uma fila para criar a ordem que não permite mensagens duplicadas
+  - Marca ticket como indisponivel
+
+- Database: MongoDb
+- Fila: SQS
+
+- Service: Order-Service
+- Qeueu: Fila de ordens para criar
+- Api: createOrder(ticketId)
+
   - Verifica se existe uma ordem em andamento para esse ticket
   - Cria uma ordem de ticket "Em pagamento"
-  - Envia evento de ticket "Em pagamento"
-- Database: MongoDb
-- Message Broker: Kafka
 
-Problema: Usuarios podem conseguir criar uma ordem ao mesmo tempo, ainda mais quanto se tem duas instancias rodando a mesma aplicação. Podemos ter uma trava no banco de dados para validar isso. Ou validar na hora da compra se existe mais de um usuario com uma ordem aberta.
+- Database: Mongo
 
 #### Comprar ticket de evento
 
+- Service: Order-Service
 - Client: Http
-- Api: buyTicket(orderId, paymentInformation, userId)
+- Api: confirmPayment(orderId, userId)
 
-  - Verifica se essa ordem está "Em pagamento" e se tem o mesmo userId do token
+  - Verifica se essa ordem está "Em pagamento"
+  - Chama rota para fazer pagamento do Payment-Service
+
+- Service: Payment-Service
+- Client: Http
+- Api: makePayment(orderId, paymentInformation, userId)
+
   - Validar as informações de pagamento
   - Salva as informações de pagamento no banco
   - Envia ao provedor externo que lida com os métodos de pagamento
 
+- Service: Payment-Service
 - Provedor externo: Http
-- Api: webhookPaymentConfirmation()
+- Api: webhookPaymentConfirmation(externalId)
 
-  - Encontra o pagamento refente no banco
-  - Atualiza o registro para pago
+  - Atualiza o registro pendente para pago
   - Emite evento com o pagamento e o orderId
 
+- Service: Order-Service
 - Event: Pagamento confirmado
-- Api: confirmBuyOfTicket(ticketId, userId)
-  - Verifica se existe uma ordem de "Em pagamento" para esse ticket
+- Api: handlePayedOrderEvent(orderId, userId)
+
+  - Verifica se existe status da ordem
   - Altera ordem para paga
-  - Envia evento de ticket pago
+
+- Service: Event-Service
+- Event: Pagamento confirmado
+- Api: handleTicketPayedEvent(ticketId, userId)
+  - Verifica status atual do Ticket
+  - Se já estiver pago emitir um log de erro avisando a duplicação
+  - Altera ticket para pago com o buyerId
+  - Envia um Server-Side-Event para o FrontEnd
 
 #### Alterar preço dos tickets
 
 - Service: DashBoard-Service
 - Client: Http
 - Api: updateTicketsPriceByEvent(employeeId, addingPorcentage, eventId)
-  - Altera todos os tickets daquele evento que não estão "Em pagamento" ou "Pago"
-- Emite evento de Alteração de Preço de Ticket
+
+  - Altera todos os tickets daquele evento que estão available
+  - Emite evento de Alteração de Preço de Ticket
 
 - Service: Event-Service
 - Evento: Alteração de Preço
 - Api: updateTicketsPrice
   - Altera todos os tickets daquele evento que não estão "Em pagamento" ou "Pago"
 
+#### Visualizar eventos
+
+- Service: Event-Service
+- Client: HTTP
+- Api: getEvents(page, perPage): Event[]
+  - Lista os eventos registrados no banco dado a paginação
+
 ### Eventos
-
-#### Ticket em pagamento
-
-DashBoard-Service
-
-- Registra ticket sendo processado
-
-Event-Service:
-
-- Registra ticket sendo processado no banco
-
-#### Ticket comprado
-
-DashBoard-Service
-
-- Registra pagamento no banco
-
-Event-Service:
-
-- Registra o pagamento no banco
-
-#### Preço de Ticket Alterado
-
-Event-Service:
-
-- Apaga o cache daquele ticket
-- Atualiza o banco de dados com o novo preço
 
 ### Banco de dados
 
 Evento
 
 - id (uuid)
-- nome (varchar)
+- name (varchar)
 - ticketNumber (int)
 - publishedDate (DateTime)
 - endSellingDate (DateTime)
@@ -192,12 +199,14 @@ Ticket:
 - price (int)
 - buyed (boolean)
 - buyer_id (user_id FK)
+- event_id (uuid)
 - is_available (boolean)
 
 Order:
 
 - id (uuid)
 - ticket_id (uuid)
+- value (int)
 - status (on_payment | payed | expired | canceled )
 - expire_time (DateTime)
 
@@ -205,9 +214,14 @@ Payment
 
 - id (uuid)
 - order_id (uuid)
+- user_id (uuid)
+- external_id (uuid)
+- value (int)
 - status (waiting confirmation | payed)
 - webhook_url (varchar)
-- external_id (uuid)
+- creditCardNumber (varchar)
+- securityNumber (vachar)
+- expirationDate (varchar)
 
 User:
 
