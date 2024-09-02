@@ -10,17 +10,19 @@ Resolução para os 3 testes para a DFCom
 
 Tabela de conteúdos
 
-- [Cenario](#cenario)
-- [Desafios Específicos](desafios-específicos)
+- [Proposta](#proposta)
 - [Solução](#solução)
 - [Numeros do Negocio](#numeros-do-negocio)
 - [Soluções tecnicas](#soluções-técnicas)
+- [High Level Architecure](#high_level_architecure)
 - [Funcionalidades](#funcionalidades)
   - [Requisitar compra de ticket](#Requisitar-compra-de-ticket)
   - [Comprar ticket de evento](#Comprar-ticket-de-evento)
   - [Alterar preço dos tickets](#Alterar-preço-dos-tickets)
   - [Visualizar eventos](#visualizar-eventos)
 - [Banco de Dados](banco-de-dados)
+
+## Proposta
 
 ### Cenario
 
@@ -41,33 +43,11 @@ O novo sistema deve:
 
 ## Solução
 
-### High Level Architecure
-
-Serviços:
-
-- Event-Service: Serviço para mostrar, cadastrar, editar eventos e seus ingressos
-- Order-Service: Serviço para lidar com a compra e venda de ingressos
-- Payment-Service: Serviço para lidar com os pagamentos
-- Dashboard-Service: Serviço para mostrar o dashboard para administradores e alterar preços dos tickets
-
-Comunicação entre serviços:
-
-- Fila: Sqs
-- Message Broker: Kafka
-
-Databases
-
-- Event Cache: Redis
-- Event Database: MongoDb
-- Booking Database: MongoDb
-- Payment Database: MongoDb
-- Dashboard Database: Mysql e replica dos 3 databases acima atualizado em RealTime com Kafka Connect.
-
 ### Numeros do negocio
 
 Media do sistema:
 
-- 1 evento tem em media 200 ingressos
+- 1 evento tem em media 1000 ingressos
 - 1 ingresso é buscado em media por 100 pessoas
 - 10 eventos por mês
 - Temos que aguentar 200 mil requisições por mês e 5 requisições por minutos 24/7 por serviço
@@ -98,11 +78,17 @@ Requisitos:
 
 ### Soluções Técnicas
 
+Performance da Aplicação:
+
 - Criar clusters da aplicação conforme o número de CPUS da maquina
-- Isolar os serviços e seus databases para diluir o processamento entre eles
+- Isolar os serviços em maquina proprias e seus databases para diluir o processamento entre eles
 - Criar instancias dos serviços conforme aumente a demanda e colocar um NGNIX como LoadBalancer para decidir qual serviço lidará com a requisição
-- Executar as regras de negocio de modo assincrono, não deixando travar as requisições por processamentos que não precisam ser retornados em realtime.
+- Executar as regras de negocio e fazer comunicação entre serviços de modo assincrono, não deixando travar as requisições por processamentos que não precisam ser retornados em realtime.
+
+Performance do Banco e outros Serviços:
+
 - Habilitar autoescalling do MongoDb para criar mais nós conforma a demanda
+- Criar um Database dedicado para Eventos muito grandes
 - Podemos fazer uma estrategia de replicar os dados para um banco de dados de Histórico e deixar o banco da aplicação apenas com os eventos que estão ativos, isso melhorará muito a performance da aplicação.
 - Habilita autoescalling no kafka para criar mais nós conforme a demanda
 - Salvar em cache todas as requisições GET para pegar detalhes do evento para aliviar o banco de dados nos reads
@@ -112,28 +98,51 @@ MessageBroker: Kafka
 Cache: Redis
 Fila: SQS
 
+### High Level Architecure
+
+Serviços:
+
+- Event-Service: Serviço para mostrar, cadastrar, editar eventos e seus ingressos
+- Order-Service: Serviço para lidar com a compra e venda de ingressos
+- Payment-Service: Serviço para lidar com os pagamentos
+- Dashboard-Service: Serviço para mostrar o dashboard para administradores e alterar preços dos tickets
+
+Comunicação entre serviços:
+
+- Fila: Sqs
+- Message Broker: Kafka
+
+Databases
+
+- Event Cache: Redis
+- Event Database: MongoDb
+- Booking Database: MongoDb
+- Payment Database: MongoDb
+- Dashboard Database: Mysql e replica dos 3 databases acima atualizado em RealTime com Kafka Connect.
+
 ### Funcionalidades
 
 #### Requisitar compra de ticket
 
-Service: Event-Service
-Cliente: Http
-Api: requestBuyTicket
+- Service: Event-Service
+- Cliente: Http
+- Api: requestBuyTicket(eventId)
 
-- Verifica se o ticket existe e está disponivel no Event-Service
-- Envia o ticketId para uma fila para criar a ordem que não permite mensagens duplicadas
-- Marca ticket como indisponivel
+  - Seleciona um ticketId que está disponivel para aquele evento
+  - Envia o ticketId para uma fila que não permite mensagens duplicadas para criar a ordem
+  - Marca ticket como indisponivel se foi enviada com sucesso
 
-Database: MongoDb
-Fila: SQS
+- Database: MongoDb
+- Fila: SQS
 
-Service: Order-Service
-Queue: Fila de ordens para criar
-Api: createOrder(ticketId)
+- Service: Order-Service
+- Qeueu: Fila de ordens para criar
+- Api: createOrder(ticketId)
 
-- Verifica se existe uma ordem em andamento para esse ticket
-- Cria uma ordem de ticket "Em pagamento"
-  Database: Mongo
+  - Verifica se existe uma ordem em andamento para esse ticket
+  - Cria uma ordem de ticket "Em pagamento"
+
+- Database: Mongo
 
 #### Comprar ticket de evento
 
