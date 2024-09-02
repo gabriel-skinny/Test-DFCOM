@@ -1,17 +1,12 @@
 import { randomUUID } from 'crypto';
 import { addMinutes } from 'date-fns';
-
-export enum OrderStatusEnum {
-  PAYED = 'payed',
-  ON_PAYMENT = 'on_payment',
-  CANCELED = 'canceld',
-  EXPIRED = 'expired',
-}
+import { OrderStatusEnum, Status } from './status';
 
 interface IOderProps {
   id?: string;
-  status: OrderStatusEnum;
+  status?: OrderStatusEnum;
   expireTime?: Date;
+  value: number;
   ticketId: string;
   userId: string;
   createdAt?: Date;
@@ -23,8 +18,9 @@ const ORDER_EXPIRES_IN_MINUTES = 10;
 
 export class Order {
   private _id: string;
-  private _status: OrderStatusEnum;
+  private _status: Status;
   readonly ticketId: string;
+  readonly value: number;
   readonly expireTime: Date;
   readonly userId: string;
   readonly createdAt: Date;
@@ -33,31 +29,16 @@ export class Order {
 
   constructor(props: IOderProps) {
     this._id = props.id || randomUUID();
-    this._status = props.status;
+    this._status = new Status(props.status || OrderStatusEnum.ON_PAYMENT);
     this.expireTime =
       props.expireTime || addMinutes(new Date(), ORDER_EXPIRES_IN_MINUTES);
     this.ticketId = props.ticketId;
     this.userId = props.userId;
+    this.value = props.value;
 
     this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt;
     this.deletedAt = props.deletedAt;
-  }
-
-  public changeStatus(status: OrderStatusEnum) {
-    const unchableStatus = [
-      OrderStatusEnum.CANCELED,
-      OrderStatusEnum.EXPIRED,
-      OrderStatusEnum.PAYED,
-    ];
-    if (unchableStatus.includes(this._status))
-      throw new Error('Can not change status');
-
-    if (status == OrderStatusEnum.PAYED) {
-      this._status = status;
-    } else {
-      throw new Error('Not recognazible status');
-    }
   }
 
   public get id() {

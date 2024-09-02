@@ -1,11 +1,11 @@
-import { Order, OrderStatusEnum } from '../entities/order';
+import { Order } from '../entities/order';
 import { AbstractOderRepository } from '../repositories/orderRepository';
-import AbstractEventService from '../services/Event';
+import { AbstractKafkaService } from '../services/Kafka';
 
 interface ICreateOrderParams {
-  status: OrderStatusEnum;
   ticketId: string;
   userId: string;
+  ticketValue: number;
 }
 
 interface ICreateOrderReturn {
@@ -14,26 +14,26 @@ interface ICreateOrderReturn {
 
 export class CreateOrderUseCase {
   constructor(
-    private eventService: AbstractEventService,
     private orderRepository: AbstractOderRepository,
+    private kafkaService: AbstractKafkaService,
   ) {}
 
   async execute({
-    status,
     ticketId,
     userId,
+    ticketValue,
   }: ICreateOrderParams): Promise<ICreateOrderReturn> {
-    const ticketAvailability =
-      await this.eventService.checkTicketAvailability(ticketId);
-    if (!ticketAvailability.isAvailable)
-      throw new Error('Can not buy a non available ticket');
-
     if (!(await this.orderRepository.existsOrderAvilableByTicketId(ticketId)))
       throw new Error('A Order available already exists for that ticket');
 
-    const order = new Order({ status, ticketId, userId });
+    const order = new Order({ ticketId, userId, value: ticketValue });
 
     await this.orderRepository.save(order);
+
+    this.kafkaService.sendEvent({
+      eventName: 'ORDER CREATED',
+      data: { orderId: order.id, ticketId: ticketId, userId },
+    });
 
     return { orderId: order.id };
   }
