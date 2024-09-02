@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { AbstractTicketRepository } from '../repositories/ticketRepository';
 
 interface IBuyTicketUseCaseParams {
@@ -5,6 +6,7 @@ interface IBuyTicketUseCaseParams {
   userId: string;
 }
 
+@Injectable()
 export class BuyTicketUseCase {
   constructor(private ticketRepository: AbstractTicketRepository) {}
 

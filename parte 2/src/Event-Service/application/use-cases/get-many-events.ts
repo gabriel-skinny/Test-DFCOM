@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { Event } from '../entities/event';
 import { AbstractEventRepository } from '../repositories/eventRepository';
 
@@ -8,6 +9,7 @@ interface IGetManyEventsParams {
 
 type IGetManyEventsReturn = Array<Event>;
 
+@Injectable()
 export class GetManyEventsUseCase {
   constructor(private eventRepository: AbstractEventRepository) {}
 

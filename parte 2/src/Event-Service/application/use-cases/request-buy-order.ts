@@ -1,11 +1,13 @@
+import { Injectable } from '@nestjs/common';
 import { AbstractTicketRepository } from '../repositories/ticketRepository';
 import { AbstractOrderService } from '../services/orderService';
 
 interface IRequestBuyOrderUseCaseCaseParams {
-  ticketId: string;
+  eventId: string;
   userId: string;
 }
 
+@Injectable()
 export class RequestBuyOrderUseCaseCase {
   constructor(
     private ticketRepository: AbstractTicketRepository,
@@ -13,20 +15,21 @@ export class RequestBuyOrderUseCaseCase {
   ) {}
 
   async execute({
-    ticketId,
+    eventId,
     userId,
   }: IRequestBuyOrderUseCaseCaseParams): Promise<void> {
     const ticketAvailable =
-      await this.ticketRepository.findTicketAvailableById(ticketId);
-    if (!ticketAvailable) throw new Error('Can not buy a non available ticket');
-
-    ticketAvailable.makeUnavailable();
-    await this.ticketRepository.save(ticketAvailable);
+      await this.ticketRepository.findTicketAvailableByEventId(eventId);
+    if (!ticketAvailable)
+      throw new Error('Event does not have available tickets anymore');
 
     await this.orderService.create({
-      ticketId,
+      ticketId: ticketAvailable.id,
       ticketValue: ticketAvailable.price,
       userId,
     });
+
+    ticketAvailable.makeUnavailable();
+    await this.ticketRepository.save(ticketAvailable);
   }
 }
