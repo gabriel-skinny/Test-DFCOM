@@ -27,24 +27,111 @@ O novo sistema deve:
 
 - Event-Service: Serviço para mostrar, cadastrar, editar eventos e seus ingressos
 - Booking-Service: Serviço para lidar com a compra e venda de ingressos
-- Waiting-Queue: Fila de espera para comprar ingressos
+- Payment-Service: Serviço para lidar com os pagamentos
 - Dashboard-Service: Serviço para mostrar o dashboard para administradores e alterar preços dos tickets
 
-### Numeros
+### Numeros do negocio
 
-- 1 evento pode ter mais de 10.000 ingressos
-- 1 ingresso é buscado em media por 10 pessoas
-- 1 ingresso pode ter mais de 1000 pessoas o procurando
-- No maior evento teremos 1000 requisições por ingresso, ou seja, 10M de requisições
-- A venda de um evento dura 1 mês, teremos 10M/Mês, 4 Req/S
-- O pico será nos primeiros 4 dias, que ficará com 70% das requisições, 17,5M/Dia e 50 Req/S
+Media do sistema:
+
+- 1 evento tem em media 200 ingressos
+- 1 ingresso é buscado em media por 100 pessoas
+- 10 eventos por mês
+- Temos que aguentar 200 mil requisições por mês e 5 requisições por minutos 24/7 por serviço
+
+Pico do sistema
+
+- 1 evento pode chegar a ter até 1000 ingressos
+- 1 ingresso pode ser procurado por mais de 10000 pessoas
+- Podemos ter 30 eventos por mês
+- 300M de requisições de compra por mês e 157req/s
+
+Requisitos:
+
+- 100% de disponibilidade
+- Baixo tempo de resposta: No máximo 200m/s de reposta nas rotas
+
+### Soluções Técnicas
+
+- Criar um shard do database por evento. Assim mitigaremos o excesso de dados em um banco de dados e o overhead do servidor do banco
+- Salvar em cache todas as requisições GET para pegar detalhes do evento para aliviar o banco de dados nos reads
 
 ### Rotas
 
-#### Comprar ticket de evento
+#### Requisitar compra de ticket
 
 - Cliente: HTTP
-- Api: buyTicket(ticketId, userId)
+- Api: requestBuyTicket(ticketId)
+  - Verifica se o ticket existe e está disponivel no Event-Service
+  - Verifica se existe uma ordem criada para esse ticket
+  - Cria uma ordem de ticket "Em pagamento"
+  - Envia evento de ticket "Em pagamento"
+- Database: MongoDb
+- Message Broker: Kafka
+
+#### Comprar ticket de evento
+
+- Client: Http
+- Api: buyTicket(orderId, paymentInformation)
+
+  - Verifica se essa ordem está "Em pagamento" e se tem o mesmo userId do token
+  - Salva as informações de pagamento no banco
+  - Envia ao provedor externo que lida com os métodos de pagamento
+
+- Provedor externo: Http
+- Api: webhookPaymentConfirmation()
+
+  - Encontra o pagamento refente no banco
+  - Atualiza o registro para pago
+  - Emite evento com o pagamento e o orderId
+
+- Event: Pagamento confirmado
+- Api: confirmBuyOfTicket(ticketId, userId)
+  - Verifica se existe uma ordem de "Em pagamento" para esse ticket
+  - Altera ordem para paga
+  - Envia evento de ticket pago
+
+#### Alterar preço dos tickets
+
+- Service: DashBoard-Service
+- Client: Http
+- Api: updateTicketsPriceByEvent(employeeId, addingPorcentage, eventId)
+  - Altera todos os tickets daquele evento que não estão "Em pagamento" ou "Pago"
+- Emite evento de Alteração de Preço de Ticket
+
+- Service: Event-Service
+- Evento: Alteração de Preço
+- Api: updateTicketsPrice
+  - Altera todos os tickets daquele evento que não estão "Em pagamento" ou "Pago"
+
+### Eventos
+
+#### Ticket em pagamento
+
+DashBoard-Service
+
+- Registra ticket sendo processado
+
+Event-Service:
+
+- Registra ticket sendo processado no banco
+
+#### Ticket comprado
+
+DashBoard-Service
+
+- Registra pagamento no banco
+
+Event-Service:
+
+- Registra o pagamento no banco
+
+#### Preço de Ticket Alterado
+
+Event-Service:
+
+- Apaga o cache daquele ticket
+- Atualiza o banco de dados com o novo preço
 
 ### Banco de dados
 
@@ -62,7 +149,22 @@ Ticket:
 - price (int)
 - buyed (boolean)
 - buyer_id (user_id FK)
-- isOnqueue (boolean)
+- is_available (boolean)
+
+Order:
+
+- id (uuid)
+- ticket_id (uuid)
+- status (processing | payed | expired | canceled )
+- expires_in (DateTime)
+
+Payment
+
+- id (uuid)
+- order_id (uuid)
+- status (waiting confirmation | payed)
+- webhook_url (varchar)
+- external_id (uuid)
 
 User:
 
