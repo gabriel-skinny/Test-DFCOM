@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/application/entities/User';
-import { UserEntityMapper } from '../mappers/user';
+import { UserEntityMapper } from '../http/mappers/user';
 
 @Injectable()
 export class UserRepository implements AbstractUserRepository {
