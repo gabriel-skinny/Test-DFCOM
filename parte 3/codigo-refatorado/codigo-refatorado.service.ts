@@ -1,12 +1,7 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, ClientSession } from "mongoose";
+import { Model } from "mongoose";
 import { Product } from "./product.model";
-import { CreateProductDto, UpdateProductDto } from "./dto/product.dto";
 
 interface ICreateProductParams {
   title: string;
@@ -100,11 +95,8 @@ export class ProductService {
     }
   }
 
-  private async findProduct(
-    id: string,
-    session?: ClientSession
-  ): Promise<Product> {
-    let product = await this.productModel.findById(id).session(session).exec();
+  private async findProduct(id: string): Promise<Product> {
+    let product = await this.productModel.findById(id).exec();
 
     if (!product) {
       throw new NotFoundException("Could not find product.");

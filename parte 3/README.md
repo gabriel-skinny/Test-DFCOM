@@ -1,13 +1,15 @@
 # Parte 3 - Refatoração de Código
 
-### O que incluir na refatoração
+Refatorar Código
+
+### Proposta: O que incluir na refatoração
 
 - Otimizações de consultas MongoDB.
 - Correção de problemas de consistência de dados.
 - Melhorias na organização e legibilidade do código.
 - Documentação breve das mudanças realizadas.
 
-### Melhorias
+### Melhorias que realizei
 
 - Tirei todas as trataivas de execption do banco de dados, que podem ser pegos por um all exception filter e tratados globalmente no controller
 - Removi as transactions desnecessarias
