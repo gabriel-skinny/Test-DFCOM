@@ -116,25 +116,24 @@ Fila: SQS
 
 #### Requisitar compra de ticket
 
-- Service: Event-Service
-- Cliente: Http
-- Api: requestBuyTicket
+Service: Event-Service
+Cliente: Http
+Api: requestBuyTicket
 
-  - Verifica se o ticket existe e está disponivel no Event-Service
-  - Envia o ticketId para uma fila para criar a ordem que não permite mensagens duplicadas
-  - Marca ticket como indisponivel
+- Verifica se o ticket existe e está disponivel no Event-Service
+- Envia o ticketId para uma fila para criar a ordem que não permite mensagens duplicadas
+- Marca ticket como indisponivel
 
-- Database: MongoDb
-- Fila: SQS
+Database: MongoDb
+Fila: SQS
 
-- Service: Order-Service
-- Qeueu: Fila de ordens para criar
-- Api: createOrder(ticketId)
+Service: Order-Service
+Queue: Fila de ordens para criar
+Api: createOrder(ticketId)
 
-  - Verifica se existe uma ordem em andamento para esse ticket
-  - Cria uma ordem de ticket "Em pagamento"
-
-- Database: Mongo
+- Verifica se existe uma ordem em andamento para esse ticket
+- Cria uma ordem de ticket "Em pagamento"
+  Database: Mongo
 
 #### Comprar ticket de evento
 
