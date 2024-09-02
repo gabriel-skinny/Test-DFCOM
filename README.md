@@ -8,7 +8,21 @@ Resolução para os 3 testes para a DFCom
 
 ## Parte 1
 
-### Cenário
+Tabela de conteúdos
+
+- [Cenario](#cenario)
+- [Desafios Específicos](desafios-específicos)
+- [Solução](#solução)
+- [Numeros do Negocio](#numeros-do-negocio)
+- [Soluções tecnicas](#soluções_técnicas)
+- [Funcionalidades](#funcionalidades)
+  - [Requisitar compra de ticket]
+  - [Comprar ticket de evento]
+  - [Alterar preço dos tickets]
+  - [Visualizar eventos](#visualizar_eventos)
+- [Banco de Dados](banco_de_dados)
+
+### Cenario
 
 Você foi contratado para desenvolver um sistema de bilheteria para um cassino que opera 24/7. O sistema atual é caótico: os dados de vendas de ingressos estão inconsistentes, há frequentes quedas de sistema durante períodos de alta demanda, e os clientes estão insatisfeitos com a lentidão do processo de compra de ingressos.
 
@@ -96,8 +110,9 @@ Requisitos:
 Bancos: MongoDb e Mysql
 MessageBroker: Kafka
 Cache: Redis
+Fila: SQS
 
-### Rotas
+### Funcionalidades
 
 #### Requisitar compra de ticket
 
@@ -180,8 +195,6 @@ Cache: Redis
 - Client: HTTP
 - Api: getEvents(page, perPage): Event[]
   - Lista os eventos registrados no banco dado a paginação
-
-### Eventos
 
 ### Banco de dados
 
