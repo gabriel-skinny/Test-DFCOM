@@ -16,9 +16,9 @@ Tabela de conteúdos
 - [Numeros do Negocio](#numeros-do-negocio)
 - [Soluções tecnicas](#soluções_técnicas)
 - [Funcionalidades](#funcionalidades)
-  - [Requisitar compra de ticket]
-  - [Comprar ticket de evento]
-  - [Alterar preço dos tickets]
+  - [Requisitar compra de ticket](#Requisitar_compra_de ticket)
+  - [Comprar ticket de evento](#Comprar_ticket_de_evento)
+  - [Alterar preço dos tickets](#Alterar_preço_dos_tickets)
   - [Visualizar eventos](#visualizar_eventos)
 - [Banco de Dados](banco_de_dados)
 
