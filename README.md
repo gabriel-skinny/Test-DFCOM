@@ -62,9 +62,8 @@ Pico do sistema
 - 80% dos ingressos são comprados nos primeiros 5 dias.
 - 240M de requisições no fluxo de compra nos primeiros 5 dias: 555 req/s
 
-Requisitos:
+Requisitos do sistema:
 
-- Registro e Atualização de Dados são mais importantes que Leitura
 - Database:
   - 1KB por registro dado uma tabela com em media 10 campos
   - Registros de eventos e tickes: 300Mil/mes -> 1KB \* 300mil = 300MB/mês
