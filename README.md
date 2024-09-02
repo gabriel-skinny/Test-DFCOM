@@ -14,13 +14,13 @@ Tabela de conteúdos
 - [Desafios Específicos](desafios-específicos)
 - [Solução](#solução)
 - [Numeros do Negocio](#numeros-do-negocio)
-- [Soluções tecnicas](#soluções_técnicas)
+- [Soluções tecnicas](#soluções-técnicas)
 - [Funcionalidades](#funcionalidades)
-  - [Requisitar compra de ticket](#Requisitar_compra_de ticket)
-  - [Comprar ticket de evento](#Comprar_ticket_de_evento)
-  - [Alterar preço dos tickets](#Alterar_preço_dos_tickets)
-  - [Visualizar eventos](#visualizar_eventos)
-- [Banco de Dados](banco_de_dados)
+  - [Requisitar compra de ticket](#Requisitar-compra-de-ticket)
+  - [Comprar ticket de evento](#Comprar-ticket-de-evento)
+  - [Alterar preço dos tickets](#Alterar-preço-dos-tickets)
+  - [Visualizar eventos](#visualizar-eventos)
+- [Banco de Dados](banco-de-dados)
 
 ### Cenario
 
