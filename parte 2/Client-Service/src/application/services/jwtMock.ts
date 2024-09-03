@@ -1,4 +1,4 @@
-import { ILoginTokenData } from 'src/Event-Service/infra/services/Auth';
+import { ILoginTokenData } from 'Event-Service/infra/services/Auth';
 import { AbstractAuthService } from './jwt';
 
 export class JwtMock implements AbstractAuthService {

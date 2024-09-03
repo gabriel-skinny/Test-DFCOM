@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './Auth';
-import { AbstractAuthService } from 'src/Event-Service/infra/services/Auth';
+import { AbstractAuthService } from 'Event-Service/infra/services/Auth';
 
 @Module({
   imports: [

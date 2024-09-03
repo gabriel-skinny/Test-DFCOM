@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AbstractAuthService } from 'src/Event-Service/infra/services/Auth';
+import { AbstractAuthService } from 'Event-Service/infra/services/Auth';
 
 export interface ILoginTokenData {
   userId: string;
