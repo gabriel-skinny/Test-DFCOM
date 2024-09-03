@@ -89,6 +89,7 @@ Performance do Banco e outros Serviços:
 - Habilitar autoescalling do MongoDb para criar mais nós conforma a demanda
 - Criar um Database dedicado para Eventos muito grandes
 - Podemos fazer uma estrategia de replicar os dados para um banco de dados de Histórico e deixar o banco da aplicação apenas com os eventos que estão ativos, isso melhorará muito a performance da aplicação.
+- Colocar INDEX no EventId
 - Habilita autoescalling no kafka para criar mais nós conforme a demanda
 - Salvar em cache todas as requisições GET para pegar detalhes do evento para aliviar o banco de dados nos reads
 
@@ -127,7 +128,7 @@ Databases
 - Cliente: Http
 - Api: requestBuyTicket(eventId)
 
-  - Seleciona um ticketId que está disponivel para aquele evento
+  - Seleciona o ultimo ticketId que está disponivel para aquele evento
   - Envia o ticketId para uma fila que não permite mensagens duplicadas para criar a ordem
   - Marca ticket como indisponivel se foi enviada com sucesso
 
