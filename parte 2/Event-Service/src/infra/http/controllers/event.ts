@@ -8,11 +8,15 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 
 import { GetManyEventsUseCase } from '../../../application/use-cases/get-many-events';
 import { RequestBuyOrderUseCaseCase } from '../../../application/use-cases/request-buy-order';
+import { AuthGuard } from '../guards/Autentication';
+import { ILoginTokenData } from '../../services/Auth';
 
+@UseGuards(AuthGuard)
 @Controller('event')
 export class EventController {
   constructor(
@@ -37,9 +41,9 @@ export class EventController {
   @Post('request-buy-order/:eventId')
   async requestBuyOrder(
     @Param('eventId', ParseUUIDPipe) eventId: string,
-    @Req() req: any,
+    @Req() req: { user: ILoginTokenData },
   ) {
-    const userId = req?.user?.userId || 'fakeUserId';
+    const userId = req?.user.userId || 'fakeUserId';
 
     await this.requestBuyOrderUseCase.execute({ eventId, userId });
 
