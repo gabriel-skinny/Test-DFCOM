@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Event } from 'src/Event-Service/application/entities/event';
 import { AbstractEventRepository } from 'src/Event-Service/application/repositories/eventRepository';
-import { EventModel } from '../entitities/event';
+import { EventModel } from '../entities/event';
 import { EventMapper } from '../mappers/event';
 import { Injectable } from '@nestjs/common';
 

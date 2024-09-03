@@ -1,5 +1,5 @@
 import { Event } from 'src/Event-Service/application/entities/event';
-import { EventModel } from '../entitities/event';
+import { EventModel } from '../entities/event';
 
 export class EventMapper {
   static toDatabase(raw: Event): EventModel {

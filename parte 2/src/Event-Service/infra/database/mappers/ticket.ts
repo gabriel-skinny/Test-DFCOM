@@ -1,5 +1,5 @@
 import { Ticket } from 'src/Event-Service/application/entities/ticket';
-import { TicketModel } from '../entitities/ticket';
+import { TicketModel } from '../entities/ticket';
 
 export class TicketMapper {
   static toDatabase(raw: Ticket): TicketModel {

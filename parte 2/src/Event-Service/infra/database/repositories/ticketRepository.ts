@@ -1,7 +1,7 @@
 import { Model, Model as MongoModel } from 'mongoose';
 import { Ticket } from 'src/Event-Service/application/entities/ticket';
 import { AbstractTicketRepository } from 'src/Event-Service/application/repositories/ticketRepository';
-import { TicketModel } from '../entitities/ticket';
+import { TicketModel } from '../entities/ticket';
 import { TicketMapper } from '../mappers/ticket';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
@@ -20,6 +20,16 @@ export default class TicketRepository implements AbstractTicketRepository {
 
   async findById(id: string): Promise<Ticket | null> {
     const ticketModel = await this.ticketModel.findById(id);
+
+    if (!ticketModel) return null;
+
+    return TicketMapper.toDomain(ticketModel);
+  }
+
+  async findTicketAvailableByEventId(eventId: string): Promise<Ticket | null> {
+    const ticketModel = await this.ticketModel.findOne({
+      eventId,
+    });
 
     if (!ticketModel) return null;
 
