@@ -1,4 +1,4 @@
-import { ILoginTokenData } from 'Event-Service/infra/services/Auth';
+import { ILoginTokenData } from '../../infra/services/Auth';
 
 export abstract class AbstractAuthService {
   abstract generateLoginToken(data: {

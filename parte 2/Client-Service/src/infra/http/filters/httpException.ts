@@ -6,9 +6,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { AlreadyCreatedError } from 'Client-Service/src/application/errors/alreadyCreated';
-import { NotFoundError } from 'Client-Service/src/application/errors/notFound';
-import { WrongValueError } from 'Client-Service/src/application/errors/wrongValue';
+import { AlreadyCreatedError } from '../../../application/errors/alreadyCreated';
+import { NotFoundError } from '../../../application/errors/notFound';
+import { WrongValueError } from '../../../application/errors/wrongValue';
 
 @Catch()
 export class CustomExceptionFilter implements ExceptionFilter {

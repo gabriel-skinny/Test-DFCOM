@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AbstractUserRepository } from 'Client-Service/src/application/repositories/userRepository';
+
 import { UserModel, UserSchema } from './entities/user';
 import UserRepository from './repositories/userRepository';
+import { AbstractUserRepository } from '../../application/repositories/userRepository';
 
 @Module({
   imports: [

@@ -1,4 +1,4 @@
-import { IUserProps, User } from 'Client-Service/src/application/entities/User';
+import { IUserProps, User } from 'src/application/entities/User';
 
 export const makeUser = (props?: Partial<IUserProps>) => {
   return new User({

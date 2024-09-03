@@ -1,6 +1,6 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
-import { CreateUserUseCase } from 'Client-Service/src/application/use-cases/create';
-import { LoginUseCase } from 'Client-Service/src/application/use-cases/login';
+import { CreateUserUseCase } from '../../../application/use-cases/create';
+import { LoginUseCase } from '../../../application/use-cases/login';
 import { CreateUserDTO, LoginDTO } from '../dto/user.dto';
 
 interface BaseControllerReturn<T = void> {

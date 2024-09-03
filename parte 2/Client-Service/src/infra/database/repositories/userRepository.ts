@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'Client-Service/src/application/entities/User';
-import { AbstractUserRepository } from 'Client-Service/src/application/repositories/userRepository';
+import { User } from '../../../application/entities/User';
+import { AbstractUserRepository } from '../../../application/repositories/userRepository';
 import { UserModel } from '../entities/user';
 import { UserMapper } from '../mappers/user';
 
@@ -19,7 +19,11 @@ export default class UserRepository implements AbstractUserRepository {
   }
 
   async existsByEmail(email: string): Promise<boolean> {
-    return !!this.userModel.exists({ email });
+    const emailExists = await this.userModel.exists({ email });
+
+    console.log({ emailExists, email });
+
+    return !!emailExists;
   }
 
   async findByEmail(email: string): Promise<User | null> {

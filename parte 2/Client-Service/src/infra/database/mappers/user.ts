@@ -1,4 +1,4 @@
-import { User } from 'Client-Service/src/application/entities/User';
+import { User } from '../../../application/entities/User';
 import { UserModel } from '../entities/user';
 
 export class UserMapper {
