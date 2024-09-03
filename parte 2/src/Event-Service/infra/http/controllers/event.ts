@@ -11,9 +11,9 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { GetManyEventsUseCase } from 'src/Event-Service/application/use-cases/get-many-events';
-import { RequestBuyOrderUseCaseCase } from 'src/Event-Service/application/use-cases/request-buy-order';
+
 import { AuthGuard } from '../guards/Autentication';
+import { GetManyEventsUseCase } from 'src/Event-Service/application/use-cases/get-many-events';
 
 @Controller('event')
 export class EventController {
