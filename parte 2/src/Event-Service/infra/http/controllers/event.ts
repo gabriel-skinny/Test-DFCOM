@@ -15,7 +15,6 @@ import { GetManyEventsUseCase } from 'src/Event-Service/application/use-cases/ge
 import { RequestBuyOrderUseCaseCase } from 'src/Event-Service/application/use-cases/request-buy-order';
 import { AuthGuard } from '../guards/Autentication';
 
-@UseGuards(AuthGuard)
 @Controller('event')
 export class EventController {
   constructor(
@@ -37,13 +36,18 @@ export class EventController {
     };
   }
 
-  @Post('request-buy-order/:ticketId')
+  @Post('request-buy-order/:eventId')
   async requestBuyOrder(
-    @Param('ticketId', ParseUUIDPipe) ticketId: string,
+    @Param('eventId', ParseUUIDPipe) eventId: string,
     @Req() req: any,
   ) {
     const userId = req?.user?.userId || 'fakeUserId';
 
-    await this.requestBuyOrderUseCase.execute({ ticketId, userId });
+    await this.requestBuyOrderUseCase.execute({ eventId, userId });
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Request to buy ticket send',
+    };
   }
 }

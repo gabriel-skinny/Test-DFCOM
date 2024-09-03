@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { AbstractTicketRepository } from '../repositories/ticketRepository';
 import { AbstractOrderService } from '../services/orderService';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 interface IRequestBuyOrderUseCaseCaseParams {
   eventId: string;
@@ -11,7 +13,8 @@ interface IRequestBuyOrderUseCaseCaseParams {
 export class RequestBuyOrderUseCaseCase {
   constructor(
     private ticketRepository: AbstractTicketRepository,
-    private orderService: AbstractOrderService,
+    @InjectQueue('order-queue')
+    private orderQeue: Queue,
   ) {}
 
   async execute({
@@ -23,7 +26,7 @@ export class RequestBuyOrderUseCaseCase {
     if (!ticketAvailable)
       throw new Error('Event does not have available tickets anymore');
 
-    await this.orderService.create({
+    await this.orderQeue.add('create-order', {
       ticketId: ticketAvailable.id,
       ticketValue: ticketAvailable.price,
       userId,
