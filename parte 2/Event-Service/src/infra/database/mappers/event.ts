@@ -1,4 +1,4 @@
-import { Event } from 'Event-Service/application/entities/event';
+import { Event } from '../../../application/entities/event';
 import { EventModel } from '../entities/event';
 
 export class EventMapper {

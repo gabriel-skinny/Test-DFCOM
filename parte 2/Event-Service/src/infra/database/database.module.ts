@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AbstractEventRepository } from 'Event-Service/application/repositories/eventRepository';
-import { AbstractTicketRepository } from 'Event-Service/application/repositories/ticketRepository';
+
 import { EventModel, EventSchema } from './entities/event';
 import { TicketModel, TicketSchema } from './entities/ticket';
 import EventRepository from './repositories/eventRepository';
 import TicketRepository from './repositories/ticketRepository';
+import { AbstractTicketRepository } from '../../application/repositories/ticketRepository';
+import { AbstractEventRepository } from '../../application/repositories/eventRepository';
 
 @Module({
   imports: [

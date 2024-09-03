@@ -1,6 +1,6 @@
 import { Model, Model as MongoModel } from 'mongoose';
-import { Ticket } from 'Event-Service/application/entities/ticket';
-import { AbstractTicketRepository } from 'Event-Service/application/repositories/ticketRepository';
+import { Ticket } from '../../../application/entities/ticket';
+import { AbstractTicketRepository } from '../../../application/repositories/ticketRepository';
 import { TicketModel } from '../entities/ticket';
 import { TicketMapper } from '../mappers/ticket';
 import { InjectModel } from '@nestjs/mongoose';

@@ -1,4 +1,4 @@
-import { Ticket } from 'Event-Service/application/entities/ticket';
+import { Ticket } from '../../../application/entities/ticket';
 import { TicketModel } from '../entities/ticket';
 
 export class TicketMapper {

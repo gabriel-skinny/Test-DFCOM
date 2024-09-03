@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   HttpStatus,
@@ -9,11 +8,10 @@ import {
   Post,
   Query,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 
-import { AuthGuard } from '../guards/Autentication';
-import { GetManyEventsUseCase } from 'Event-Service/application/use-cases/get-many-events';
+import { GetManyEventsUseCase } from '../../../application/use-cases/get-many-events';
+import { RequestBuyOrderUseCaseCase } from '../../../application/use-cases/request-buy-order';
 
 @Controller('event')
 export class EventController {
