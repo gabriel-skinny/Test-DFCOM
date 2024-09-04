@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from './database/database.module';
-import { ServiceModule } from './services/services.module';
 
 import { BullModule } from '@nestjs/bullmq';
 import { OrderController } from './controllers/order';
@@ -17,7 +16,6 @@ import { GetOrdersByUserIdUseCase } from 'src/application/use-cases/get-orders-b
   imports: [
     BullModule.registerQueue({ name: process.env.BULLMQ_QUEUE_NAME }),
     DatabaseModule,
-    ServiceModule,
     ClientsModule.register([
       {
         name: 'PAYMENT_SERVICE',

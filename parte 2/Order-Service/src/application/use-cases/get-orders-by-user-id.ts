@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { AbstractOderRepository } from '../repositories/orderRepository';
 
 interface IGetOrdersByUserId {
@@ -6,6 +7,7 @@ interface IGetOrdersByUserId {
   perPage: number;
 }
 
+@Injectable()
 export class GetOrdersByUserIdUseCase {
   constructor(private orderRepository: AbstractOderRepository) {}
 

@@ -3,6 +3,7 @@ import { OrderStatusEnum } from '../entities/status';
 import { AbstractOderRepository } from '../repositories/orderRepository';
 import { AbstractPaymentService } from '../services/Payment';
 import { WrongValueError } from '../errors/wrongValue';
+import { ClientProxy } from '@nestjs/microservices';
 
 interface IUpdateOrderStatusUseCaseParams {
   orderId: string;
@@ -17,7 +18,7 @@ export default class MakePaymentUseCase {
   constructor(
     private orderRepository: AbstractOderRepository,
     @Inject('PAYMENT_SERVICE')
-    private paymentService: AbstractPaymentService,
+    private paymentService: ClientProxy,
   ) {}
 
   async execute({
@@ -36,13 +37,15 @@ export default class MakePaymentUseCase {
     if (!pendentOrder)
       throw new WrongValueError('Order already payed or canceled');
 
-    await this.paymentService.createPayment({
+    const createPaymentData = {
       creditCardExpirationDate,
       creditCardNumber,
       creditCardSecurityNumber,
       orderId,
       userId,
       value: pendentOrder.value,
-    });
+    };
+
+    this.paymentService.send({ cmd: 'create-payment' }, createPaymentData);
   }
 }

@@ -41,7 +41,6 @@ export class OrderController {
 
     return {
       message: 'Payment sent',
-      statusCode: HttpStatus.OK,
     };
   }
 
