@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { ClientController } from './controllers/client.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ServiceModule } from './auth/services.module';
+import { EventController } from './controllers/event.controller';
 
 const services = ['CLIENT_SERVICE', 'EVENT_SERVICE'];
 
@@ -20,7 +21,7 @@ const services = ['CLIENT_SERVICE', 'EVENT_SERVICE'];
     ),
     ServiceModule,
   ],
-  controllers: [ClientController],
+  controllers: [ClientController, EventController],
   providers: [],
 })
 export class AppModule {}
