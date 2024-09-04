@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractUserRepository } from '../repositories/userRepository';
-import { AbstractAuthService } from '../services/jwt';
 import { NotFoundError } from '../errors/notFound';
 import { WrongValueError } from '../errors/wrongValue';
+import { AbstractUserRepository } from '../repositories/userRepository';
 
 interface ILoginUseCaseParams {
   email: string;
@@ -10,15 +9,14 @@ interface ILoginUseCaseParams {
 }
 
 interface ILoginUseCaseReturn {
-  token: string;
+  userId: string;
+  name: string;
+  email: string;
 }
 
 @Injectable()
 export class LoginUseCase {
-  constructor(
-    private userRepository: AbstractUserRepository,
-    private authService: AbstractAuthService,
-  ) {}
+  constructor(private userRepository: AbstractUserRepository) {}
 
   async execute({
     email,
@@ -31,12 +29,6 @@ export class LoginUseCase {
     if (!user.password_hash.isTheSameValue(password))
       throw new WrongValueError('Password does not match');
 
-    const { token } = await this.authService.generateLoginToken({
-      userId: user.id,
-      name: user.name,
-      email: user.email,
-    });
-
-    return { token };
+    return { userId: user.id, email: user.email, name: user.name };
   }
 }
