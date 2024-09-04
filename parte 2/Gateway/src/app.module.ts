@@ -4,8 +4,14 @@ import { ClientController } from './controllers/client.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ServiceModule } from './auth/services.module';
 import { EventController } from './controllers/event.controller';
+import { OrderController } from './controllers/order.controller';
 
-const services = ['CLIENT_SERVICE', 'EVENT_SERVICE'];
+const services = [
+  'CLIENT_SERVICE',
+  'EVENT_SERVICE',
+  'ORDER_SERVICE',
+  'PAYMENT_SERVICE',
+];
 
 @Module({
   imports: [
@@ -21,7 +27,7 @@ const services = ['CLIENT_SERVICE', 'EVENT_SERVICE'];
     ),
     ServiceModule,
   ],
-  controllers: [ClientController, EventController],
+  controllers: [ClientController, EventController, OrderController],
   providers: [],
 })
 export class AppModule {}
