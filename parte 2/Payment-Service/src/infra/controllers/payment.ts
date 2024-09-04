@@ -1,16 +1,8 @@
-import {
-  Controller,
-  HttpStatus,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, HttpStatus } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 import { CreatePaymentUseCase } from 'src/application/use-cases/create';
 import { WebhookPaymentConfirmation } from 'src/application/use-cases/webhook-payment-confirmation';
-import { AuthGuard } from '../guards/Autentication';
 
-@UseGuards(AuthGuard)
 @Controller('payment')
 export class PaymentController {
   constructor(
@@ -29,10 +21,8 @@ export class PaymentController {
     await this.createPaymentUseCase.execute(data);
   }
 
-  @Post('webhook-payment-confirmation/:externalId')
-  async webhookPaymentConfirmation(
-    @Param('externalId', ParseUUIDPipe) externalId: string,
-  ) {
+  @MessagePattern({ cmd: 'webhook-payment-confirmation' })
+  async webhookPaymentConfirmation({ externalId }: { externalId: string }) {
     await this.webhookPaymentConfirmationUseCase.execute({
       externalId,
     });
