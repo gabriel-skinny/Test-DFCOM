@@ -18,7 +18,7 @@ interface ICreateOrderReturn {
 export class CreateOrderUseCase {
   constructor(
     private orderRepository: AbstractOderRepository,
-    private kafkaService: AbstractKafkaService,
+    /* private kafkaService: AbstractKafkaService, */
   ) {}
 
   async execute({
@@ -35,10 +35,10 @@ export class CreateOrderUseCase {
 
     await this.orderRepository.save(order);
 
-    this.kafkaService.sendEvent({
+    /*   this.kafkaService.sendEvent({
       eventName: 'ORDER CREATED',
       data: { orderId: order.id, ticketId: ticketId, userId },
-    });
+    }); */
 
     return { orderId: order.id };
   }

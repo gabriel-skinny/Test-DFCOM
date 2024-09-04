@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { OrderStatusEnum } from '../entities/status';
 import { AbstractOderRepository } from '../repositories/orderRepository';
 import { AbstractPaymentService } from '../services/Payment';
@@ -16,6 +16,7 @@ interface IUpdateOrderStatusUseCaseParams {
 export default class MakePaymentUseCase {
   constructor(
     private orderRepository: AbstractOderRepository,
+    @Inject('PAYMENT_SERVICE')
     private paymentService: AbstractPaymentService,
   ) {}
 
