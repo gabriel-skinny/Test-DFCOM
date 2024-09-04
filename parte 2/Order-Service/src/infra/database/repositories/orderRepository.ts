@@ -47,8 +47,19 @@ export default class OrderRepository implements AbstractOderRepository {
     return OrderMapper.toDomain(order);
   }
 
-  async findManyByUserId(userId: string): Promise<Order[]> {
-    const orders = await this.orderModel.find({ userId });
+  async findManyByUserId({
+    userId,
+    limit,
+    skip,
+  }: {
+    userId: string;
+    limit: number;
+    skip: number;
+  }): Promise<Order[]> {
+    const orders = await this.orderModel
+      .find({ userId })
+      .limit(limit)
+      .skip(skip);
 
     if (!orders) return [];
 

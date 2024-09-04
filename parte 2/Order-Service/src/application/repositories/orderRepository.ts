@@ -5,7 +5,11 @@ export abstract class AbstractOderRepository {
   abstract save(order: Order): Promise<void>;
   abstract existsOrderAvilableByTicketId(ticketId: string): Promise<boolean>;
   abstract findById(id: string): Promise<Order>;
-  abstract findManyByUserId(userId: string): Promise<Order[]>;
+  abstract findManyByUserId(data: {
+    userId: string;
+    limit: number;
+    skip: number;
+  }): Promise<Order[]>;
   abstract findByStatusAndIdAndUserId(data: {
     id: string;
     userId: string;

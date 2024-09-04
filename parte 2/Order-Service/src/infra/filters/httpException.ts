@@ -9,20 +9,18 @@ import { Response } from 'express';
 import { AlreadyCreatedError } from '../../application/errors/alreadyCreated';
 import { NotFoundError } from '../../application/errors/notFound';
 import { WrongValueError } from '../../application/errors/wrongValue';
+import { RpcException } from '@nestjs/microservices';
+import { Observable, throwError } from 'rxjs';
 
 @Catch()
 export class CustomExceptionFilter implements ExceptionFilter {
-  catch(exception: Error | HttpException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
+  catch(
+    exception: Error | HttpException,
+    host: ArgumentsHost,
+  ): Observable<any> {
+    const message = exception.message;
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    const message =
-      exception instanceof HttpException
-        ? exception.getResponse()
-        : exception.message;
-
-    if (exception instanceof HttpException) status = exception.getStatus();
     if (exception instanceof NotFoundError) status = HttpStatus.NOT_FOUND;
     if (
       exception instanceof AlreadyCreatedError ||
@@ -30,9 +28,9 @@ export class CustomExceptionFilter implements ExceptionFilter {
     )
       status = HttpStatus.BAD_REQUEST;
 
-    response.status(status).json({
-      statusCode: status,
-      message,
-    });
+    return throwError(() => ({
+      message: message,
+      status,
+    }));
   }
 }

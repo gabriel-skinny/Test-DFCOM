@@ -45,13 +45,21 @@ export class OrderController {
     };
   }
 
-  @MessagePattern({ cmd: 'get-orders-by-user-id' })
+  @MessagePattern({ cmd: 'get-many-by-user' })
   async getOrdersByUserId({
     userId,
+    page,
+    perPage,
   }: {
     userId: string;
+    perPage: number;
+    page: number;
   }): Promise<{ orders: IOrderViewModel[] }> {
-    const orders = await this.getOrdersByUserIdUseCase.execute({ userId });
+    const orders = await this.getOrdersByUserIdUseCase.execute({
+      userId,
+      page,
+      perPage,
+    });
 
     return {
       orders: orders.map(OrderViewModel.toHttp),
