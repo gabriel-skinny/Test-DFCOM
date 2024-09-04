@@ -25,7 +25,8 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-    if (!(exception instanceof HttpException)) status = exception.status;
+    if (!(exception instanceof HttpException))
+      status = exception?.status || HttpStatus.INTERNAL_SERVER_ERROR;
 
     const message =
       exception instanceof HttpException

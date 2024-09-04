@@ -1,4 +1,4 @@
-expect interface BaseControllerReturn<T = void> {
+export interface BaseControllerReturn<T = void> {
   message: string;
   data?: T;
   statusCode: HttpStatus;

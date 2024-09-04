@@ -16,6 +16,7 @@ import { AuthGuard } from '../guards/Autentication';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ILoginTokenData } from 'src/auth/Auth';
+import { BaseControllerReturn } from './interface';
 
 interface IOrderTicketReturn {
   ticketId: string;
@@ -29,7 +30,7 @@ export class EventController {
     private eventService: ClientProxy,
   ) {}
 
-  @Get('many')
+  @Get()
   async getMany(
     @Query('perpage', new ParseIntPipe()) perPage: number,
     @Query('page', new ParseIntPipe()) page: number,

@@ -5,8 +5,10 @@ import {
   HttpStatus,
   Inject,
   Param,
+  ParseIntPipe,
   ParseUUIDPipe,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -61,21 +63,23 @@ export class OrderController {
     };
   }
 
-  @Get('many')
-  async getManyByUse(
+  @Get()
+  async getManyByUser(
     @Req() { user }: { user: ILoginTokenData },
+    @Query('perpage', new ParseIntPipe()) perPage: number,
+    @Query('page', new ParseIntPipe()) page: number,
   ): Promise<BaseControllerReturn<{ orders: IGetOrdersByUserReturn[] }>> {
-    const { orders } = await firstValueFrom(
-      this.orderService.emit<{ orders: IGetOrdersByUserReturn[] }>(
-        { cmd: 'get-many-by-user-id' },
-        { userId: user.userId },
+    const data = await firstValueFrom(
+      this.orderService.send<{ orders: IGetOrdersByUserReturn[] }>(
+        { cmd: 'get-many-by-user' },
+        { userId: user.userId, perPage, page },
       ),
     );
 
     return {
       statusCode: HttpStatus.OK,
       message: 'Orders from user',
-      data: { orders },
+      data: { orders: data.orders },
     };
   }
 }

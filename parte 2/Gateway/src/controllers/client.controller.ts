@@ -12,6 +12,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { AbstractAuthService } from '../auth/Auth';
 import { CreateUserDTO, LoginDTO } from 'src/dtos/user.dto';
 import { firstValueFrom } from 'rxjs';
+import { BaseControllerReturn } from './interface';
 
 interface ILoginUserServiceReturnData {
   userId: string;
