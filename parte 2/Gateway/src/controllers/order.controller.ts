@@ -1,9 +1,8 @@
-@UseGuards(AuthGuard)
+/* @UseGuards(AuthGuard)
 @Controller('order')
 export class OrderController {
   constructor(
     private readonly confirmPaymentUseCase: ConfirmPaymentUseCase,
-    private readonly updateStatusOrderUseCase: UpdateOrderStatusUseCase,
   ) {}
 
   @Post('confirm-payment/:orderId')
@@ -25,4 +24,4 @@ export class OrderController {
       statusCode: HttpStatus.OK,
     };
   }
-}
+} */

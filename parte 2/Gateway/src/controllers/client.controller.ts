@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  HttpException,
   HttpStatus,
   Inject,
   InternalServerErrorException,
@@ -10,12 +11,7 @@ import { ClientProxy } from '@nestjs/microservices';
 
 import { AbstractAuthService } from '../auth/Auth';
 import { CreateUserDTO, LoginDTO } from 'src/dtos/user.dto';
-
-interface BaseControllerReturn<T = void> {
-  message: string;
-  data?: T;
-  statusCode: HttpStatus;
-}
+import { firstValueFrom } from 'rxjs';
 
 interface ILoginUserServiceReturnData {
   userId: string;
@@ -23,7 +19,11 @@ interface ILoginUserServiceReturnData {
   name: string;
 }
 
-@Controller('client')
+interface ICreateUserServiceReturnData {
+  userId: string;
+}
+
+@Controller('user')
 export class ClientController {
   constructor(
     @Inject('CLIENT_SERVICE')
@@ -34,18 +34,22 @@ export class ClientController {
   @Post()
   async create(
     @Body() { email, name, password }: CreateUserDTO,
-  ): Promise<BaseControllerReturn> {
-    this.clientService
-      .send('create-user', {
-        email,
-        name,
-        password,
-      })
-      .subscribe();
+  ): Promise<BaseControllerReturn<ICreateUserServiceReturnData>> {
+    const userData = await firstValueFrom(
+      this.clientService.send<ICreateUserServiceReturnData>(
+        { cmd: 'user-create' },
+        {
+          email,
+          name,
+          password,
+        },
+      ),
+    );
 
     return {
       message: 'User created succesfully',
       statusCode: HttpStatus.OK,
+      data: userData,
     };
   }
 
@@ -53,25 +57,20 @@ export class ClientController {
   async login(
     @Body() { email, password }: LoginDTO,
   ): Promise<BaseControllerReturn<{ token: string }>> {
-    const logInDataObervable =
-      this.clientService.send<ILoginUserServiceReturnData>('login-user', {
-        email,
-        password,
-      });
-
-    let token: string;
-    logInDataObervable.subscribe(async (data) => {
-      if (!data) throw new InternalServerErrorException();
-
-      const { token: tokenCreated } = await this.authService.generateLoginToken(
+    const data = await firstValueFrom(
+      this.clientService.send<ILoginUserServiceReturnData>(
+        { cmd: 'user-login' },
         {
-          userId: data.userId,
-          email: data.email,
-          name: data.name,
+          email,
+          password,
         },
-      );
+      ),
+    );
 
-      token = tokenCreated;
+    const { token } = await this.authService.generateLoginToken({
+      userId: data.userId,
+      email: data.email,
+      name: data.name,
     });
 
     return {

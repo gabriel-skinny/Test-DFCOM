@@ -6,17 +6,27 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { AlreadyCreatedError } from '../../application/errors/alreadyCreated';
-import { NotFoundError } from '../../application/errors/notFound';
-import { WrongValueError } from '../../application/errors/wrongValue';
+import { NotFoundError } from 'rxjs';
+import { AlreadyCreatedError } from 'src/errors/alreadyCreated';
+import { WrongValueError } from 'src/errors/wrongValue';
+
+type ICustomError = Error & {
+  message: string;
+  status: HttpStatus;
+};
 
 @Catch()
 export class CustomExceptionFilter implements ExceptionFilter {
-  catch(exception: Error | HttpException, host: ArgumentsHost) {
+  catch(exception: ICustomError | HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    console.log({ exception });
+
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+    if (!(exception instanceof HttpException)) status = exception.status;
+
     const message =
       exception instanceof HttpException
         ? exception.getResponse()
