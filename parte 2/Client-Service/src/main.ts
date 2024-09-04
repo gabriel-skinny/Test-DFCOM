@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { CustomExceptionFilter } from './infra/http/filters/httpException';
+import { CustomExceptionFilter } from './infra/filters/httpException';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
@@ -9,6 +9,10 @@ async function bootstrap() {
     AppModule,
     {
       transport: Transport.TCP,
+      options: {
+        host: process.env.SERVICE_HOST,
+        port: Number(process.env.SERVICE_PORT),
+      },
     },
   );
 

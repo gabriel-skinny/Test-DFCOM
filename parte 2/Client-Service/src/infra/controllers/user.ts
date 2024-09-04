@@ -4,12 +4,6 @@ import { MessagePattern } from '@nestjs/microservices';
 import { CreateUserUseCase } from 'src/application/use-cases/create';
 import { LoginUseCase } from 'src/application/use-cases/login';
 
-interface BaseControllerReturn<T = void> {
-  message: string;
-  data?: T;
-  statusCode: HttpStatus;
-}
-
 interface ILoginUserServiceReturnData {
   userId: string;
   email: string;
@@ -39,33 +33,26 @@ export class UserController {
     email,
     name,
     password,
-  }: ICreateUserParams): Promise<BaseControllerReturn> {
-    await this.createUserUseCase.execute({
+  }: ICreateUserParams): Promise<{ userId: string }> {
+    const user = await this.createUserUseCase.execute({
       email,
       name,
       password,
     });
 
-    return {
-      message: 'User created succesfully',
-      statusCode: HttpStatus.OK,
-    };
+    return { userId: user.id };
   }
 
   @MessagePattern({ cmd: 'user-login' })
   async login({
     email,
     password,
-  }: ILoginParams): Promise<BaseControllerReturn<ILoginUserServiceReturnData>> {
+  }: ILoginParams): Promise<ILoginUserServiceReturnData> {
     const data = await this.loginUseCase.execute({
       email,
       password,
     });
 
-    return {
-      message: 'loged in succesfully',
-      statusCode: HttpStatus.OK,
-      data,
-    };
+    return data;
   }
 }

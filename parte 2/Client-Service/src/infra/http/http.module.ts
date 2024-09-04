@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+/* import { Module } from '@nestjs/common';
 import { UserController } from './controllers/user.controller';
 
 import { ServiceModule } from '../services/services.module';
@@ -12,3 +12,4 @@ import { CreateUserUseCase } from 'src/application/use-cases/create';
   controllers: [UserController],
 })
 export class HttpModule {}
+ */

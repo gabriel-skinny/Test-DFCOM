@@ -21,8 +21,6 @@ export default class UserRepository implements AbstractUserRepository {
   async existsByEmail(email: string): Promise<boolean> {
     const emailExists = await this.userModel.exists({ email });
 
-    console.log({ emailExists, email });
-
     return !!emailExists;
   }
 

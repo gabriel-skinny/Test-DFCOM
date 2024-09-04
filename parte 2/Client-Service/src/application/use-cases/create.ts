@@ -13,7 +13,7 @@ interface ICreateUserUseCaseParams {
 export class CreateUserUseCase {
   constructor(private userRepository: AbstractUserRepository) {}
 
-  async execute(data: ICreateUserUseCaseParams) {
+  async execute(data: ICreateUserUseCaseParams): Promise<User> {
     if (await this.userRepository.existsByEmail(data.email)) {
       throw new AlreadyCreatedError('User already created with that email');
     }
@@ -26,5 +26,7 @@ export class CreateUserUseCase {
     user.password_hash.hashPassword();
 
     await this.userRepository.save(user);
+
+    return user;
   }
 }
