@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import { OrderStatusEnum } from '../entities/status';
 import { AbstractOderRepository } from '../repositories/orderRepository';
 import { AbstractPaymentService } from '../services/Payment';
+import { WrongValueError } from '../errors/wrongValue';
 
 interface IUpdateOrderStatusUseCaseParams {
   orderId: string;
@@ -10,6 +12,7 @@ interface IUpdateOrderStatusUseCaseParams {
   creditCardExpirationDate: string;
 }
 
+@Injectable()
 export default class ConfirmPaymentUseCase {
   constructor(
     private orderRepository: AbstractOderRepository,
@@ -29,7 +32,8 @@ export default class ConfirmPaymentUseCase {
       status: OrderStatusEnum.ON_PAYMENT,
     });
 
-    if (!pendentOrder) throw new Error('Order already payed or canceled');
+    if (!pendentOrder)
+      throw new WrongValueError('Order already payed or canceled');
 
     await this.paymentService.createPayment({
       creditCardExpirationDate,

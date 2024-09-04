@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { OrderStatusEnum } from '../entities/status';
 import { AbstractOderRepository } from '../repositories/orderRepository';
 
@@ -6,6 +7,7 @@ interface IUpdateOrderStatusUseCaseParams {
   orderId: string;
 }
 
+@Injectable()
 export default class UpdateOrderStatusUseCase {
   constructor(private orderRepository: AbstractOderRepository) {}
 

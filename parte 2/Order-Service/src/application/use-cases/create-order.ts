@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import { Order } from '../entities/order';
 import { AbstractOderRepository } from '../repositories/orderRepository';
 import { AbstractKafkaService } from '../services/Kafka';
+import { AlreadyCreatedError } from '../errors/alreadyCreated';
 
 interface ICreateOrderParams {
   ticketId: string;
@@ -12,6 +14,7 @@ interface ICreateOrderReturn {
   orderId: string;
 }
 
+@Injectable()
 export class CreateOrderUseCase {
   constructor(
     private orderRepository: AbstractOderRepository,
@@ -24,7 +27,9 @@ export class CreateOrderUseCase {
     ticketValue,
   }: ICreateOrderParams): Promise<ICreateOrderReturn> {
     if (!(await this.orderRepository.existsOrderAvilableByTicketId(ticketId)))
-      throw new Error('A Order available already exists for that ticket');
+      throw new AlreadyCreatedError(
+        'A Order available already exists for that ticket',
+      );
 
     const order = new Order({ ticketId, userId, value: ticketValue });
 
