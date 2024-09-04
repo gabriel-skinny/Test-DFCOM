@@ -1,42 +1,39 @@
-import {
-  Body,
-  Controller,
-  HttpStatus,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, HttpStatus } from '@nestjs/common';
 
-import ConfirmPaymentUseCase from 'src/application/use-cases/confirm-payment';
-import { AuthGuard } from '../guards/Autentication';
-import { ConfirmPaymentDTO } from '../dtos/order';
-import { ILoginTokenData } from '../services/Auth';
-import { CreateOrderUseCase } from 'src/application/use-cases/create-order';
-import UpdateOrderStatusUseCase from 'src/application/use-cases/update-order-status';
+import { MessagePattern } from '@nestjs/microservices';
 import { OrderStatusEnum } from 'src/application/entities/status';
+import MakePaymentUseCase from 'src/application/use-cases/make-payment';
+import UpdateOrderStatusUseCase from 'src/application/use-cases/update-order-status';
 
-@UseGuards(AuthGuard)
-@Controller('order')
+interface IMakePaymentParams {
+  orderId: string;
+  userId: string;
+  creditCardExpirationDate: string;
+  creditCardNumber: string;
+  creditCardSecurityNumber: string;
+}
+
+@Controller()
 export class OrderController {
   constructor(
-    private readonly confirmPaymentUseCase: ConfirmPaymentUseCase,
+    private readonly makePaymentUseCase: MakePaymentUseCase,
     private readonly updateStatusOrderUseCase: UpdateOrderStatusUseCase,
   ) {}
 
-  @Post('confirm-payment/:orderId')
-  async confirmPayment(
-    @Param('orderId', ParseUUIDPipe) orderId: string,
-    @Body() paymentData: ConfirmPaymentDTO,
-    @Req() { user }: { user: ILoginTokenData },
-  ) {
-    await this.confirmPaymentUseCase.execute({
+  @MessagePattern({ cmd: 'make-payment' })
+  async makePayment({
+    userId,
+    orderId,
+    creditCardExpirationDate,
+    creditCardNumber,
+    creditCardSecurityNumber,
+  }: IMakePaymentParams) {
+    await this.makePaymentUseCase.execute({
       orderId,
-      userId: user.userId,
-      creditCardExpirationDate: paymentData.creditCardExpirationDate,
-      creditCardNumber: paymentData.creditCardNumber,
-      creditCardSecurityNumber: paymentData.creditCardSecurityNumber,
+      userId,
+      creditCardExpirationDate,
+      creditCardNumber,
+      creditCardSecurityNumber,
     });
 
     return {

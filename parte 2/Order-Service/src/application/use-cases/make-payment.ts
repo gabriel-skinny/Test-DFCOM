@@ -13,7 +13,7 @@ interface IUpdateOrderStatusUseCaseParams {
 }
 
 @Injectable()
-export default class ConfirmPaymentUseCase {
+export default class MakePaymentUseCase {
   constructor(
     private orderRepository: AbstractOderRepository,
     private paymentService: AbstractPaymentService,
