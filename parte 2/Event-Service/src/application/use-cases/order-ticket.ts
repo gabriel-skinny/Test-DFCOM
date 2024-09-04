@@ -1,16 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { AbstractTicketRepository } from '../repositories/ticketRepository';
-import { AbstractOrderService } from '../services/orderService';
 import { InjectQueue } from '@nestjs/bullmq';
+import { Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
+import { AbstractTicketRepository } from '../repositories/ticketRepository';
+import { NotFoundError } from '../errors/notFound';
 
-interface IRequestBuyOrderUseCaseCaseParams {
+interface IOrderTicketUseCaseCaseParams {
   eventId: string;
   userId: string;
 }
 
+interface IOrderTicketUseCaseReturn {
+  ticketId: string;
+}
+
 @Injectable()
-export class RequestBuyOrderUseCaseCase {
+export class OrderTicketUseCaseCase {
   constructor(
     private ticketRepository: AbstractTicketRepository,
     @InjectQueue('order-queue')
@@ -20,11 +24,11 @@ export class RequestBuyOrderUseCaseCase {
   async execute({
     eventId,
     userId,
-  }: IRequestBuyOrderUseCaseCaseParams): Promise<void> {
+  }: IOrderTicketUseCaseCaseParams): Promise<IOrderTicketUseCaseReturn> {
     const ticketAvailable =
       await this.ticketRepository.findTicketAvailableByEventId(eventId);
     if (!ticketAvailable)
-      throw new Error('Event does not have available tickets anymore');
+      throw new NotFoundError('Event does not have available tickets anymore');
 
     await this.orderQeue.add('create-order', {
       ticketId: ticketAvailable.id,
@@ -34,5 +38,7 @@ export class RequestBuyOrderUseCaseCase {
 
     ticketAvailable.makeUnavailable();
     await this.ticketRepository.save(ticketAvailable);
+
+    return { ticketId: ticketAvailable.id };
   }
 }
