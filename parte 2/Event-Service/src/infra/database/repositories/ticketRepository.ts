@@ -18,6 +18,16 @@ export default class TicketRepository implements AbstractTicketRepository {
     await this.ticketModel.create(ticketModel);
   }
 
+  async updateById({
+    id,
+    updateData,
+  }: {
+    id: string;
+    updateData: Partial<Ticket>;
+  }): Promise<void> {
+    await this.ticketModel.updateOne({ id }, updateData);
+  }
+
   async findById(id: string): Promise<Ticket | null> {
     const ticketModel = await this.ticketModel.findById(id);
 

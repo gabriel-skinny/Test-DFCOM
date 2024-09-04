@@ -37,7 +37,10 @@ export class OrderTicketUseCaseCase {
     });
 
     ticketAvailable.makeUnavailable();
-    await this.ticketRepository.save(ticketAvailable);
+    await this.ticketRepository.updateById({
+      id: ticketAvailable.id,
+      updateData: { isAvailable: ticketAvailable.isAvailable },
+    });
 
     return { ticketId: ticketAvailable.id };
   }

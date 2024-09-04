@@ -4,9 +4,14 @@ import { OrderTicketUseCaseCase } from 'src/application/use-cases/order-ticket';
 import { EventController } from './controllers/event';
 import { DatabaseModule } from './database/database.module';
 import { ServiceModule } from './services/services.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
-  imports: [DatabaseModule, ServiceModule],
+  imports: [
+    BullModule.registerQueue({ name: 'order-queue' }),
+    DatabaseModule,
+    ServiceModule,
+  ],
   providers: [GetManyEventsUseCase, OrderTicketUseCaseCase],
   controllers: [EventController],
 })
