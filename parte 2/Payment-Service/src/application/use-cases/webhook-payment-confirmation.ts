@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { AbstractPaymentRepository } from '../repositories/paymentRepository';
 import { AbstractKafkaService } from '../services/kafkaService';
 
@@ -5,6 +6,7 @@ interface IWebhookPaymentConfirmationParams {
   externalId: string;
 }
 
+@Injectable()
 export class WebhookPaymentConfirmation {
   constructor(
     private paymentRepository: AbstractPaymentRepository,

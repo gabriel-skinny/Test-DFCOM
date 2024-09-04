@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-enum PaymentStatusEnum {
+export enum PaymentStatusEnum {
   PAYED = 'payed',
   PENDENT = 'pendent',
   CANCELED = 'canceled',
@@ -15,6 +15,7 @@ interface IPropsPayment {
   creditCardNumber: string;
   creditCardSecurityNumber: string;
   creditCardExpirationDate: string;
+  webhookUrl?: string;
   externalId?: string;
   createdAt?: Date;
   deletedAt?: Date;
@@ -28,13 +29,13 @@ export class Payment {
   readonly value: number;
   private _status: PaymentStatusEnum;
   readonly webhookUrl: string;
-  public externalId: string;
+  public externalId?: string;
   readonly creditCardNumber: string;
   readonly creditCardSecurityNumber: string;
   readonly creditCardExpirationDate: string;
   private _createdAt: Date;
-  readonly deletedAt: Date;
-  readonly updatedAt: Date;
+  readonly deletedAt?: Date;
+  readonly updatedAt?: Date;
 
   constructor(props: IPropsPayment) {
     this._id = props.id || randomUUID();
@@ -50,7 +51,7 @@ export class Payment {
     this.deletedAt = props.deletedAt;
     this.updatedAt = props.updatedAt;
 
-    this.webhookUrl = 'https://webhook.com';
+    this.webhookUrl = props.webhookUrl || 'https://webhook.com';
   }
 
   public get id() {

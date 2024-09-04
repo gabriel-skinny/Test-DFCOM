@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { Payment } from '../entities/payment';
 import { AbstractPaymentRepository } from '../repositories/paymentRepository';
 import { AbstractExternalPaymentProvider } from '../services/externalPaymentProvider';
@@ -15,7 +16,8 @@ interface IPaymentUseCaseReturn {
   paymentId: string;
 }
 
-export class PaymentUseCase {
+@Injectable()
+export class CreatePaymentUseCase {
   constructor(
     private externalPaymentProvider: AbstractExternalPaymentProvider,
     private paymentRepository: AbstractPaymentRepository,
