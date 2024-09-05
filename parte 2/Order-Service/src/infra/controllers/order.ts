@@ -23,7 +23,7 @@ export class OrderController {
     private readonly getOrdersByUserIdUseCase: GetOrdersByUserIdUseCase,
   ) {}
 
-  @MessagePattern({ cmd: 'make-payment' })
+  /* @MessagePattern({ cmd: 'make-payment' }) */
   async makePayment({
     userId,
     orderId,
@@ -44,7 +44,7 @@ export class OrderController {
     };
   }
 
-  @MessagePattern({ cmd: 'get-many-by-user' })
+  /*  @MessagePattern({ cmd: 'get-many-by-user' }) */
   async getOrdersByUserId({
     userId,
     page,
