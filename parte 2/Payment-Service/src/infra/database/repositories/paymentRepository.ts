@@ -28,4 +28,25 @@ export default class PaymentRepository implements AbstractPaymentRepository {
 
     return PaymentMapper.toDomain(payment);
   }
+
+  async findManyByUserId({
+    userId,
+    skip,
+    limit,
+  }: {
+    userId: string;
+    skip: number;
+    limit: number;
+  }): Promise<Payment[]> {
+    const payments = await this.paymentModel
+      .find({
+        userId,
+      })
+      .skip(skip)
+      .limit(limit);
+
+    if (!payments) return [];
+
+    return payments.map(PaymentMapper.toDomain);
+  }
 }

@@ -10,7 +10,7 @@ interface IWebhookPaymentConfirmationParams {
 export class WebhookPaymentConfirmation {
   constructor(
     private paymentRepository: AbstractPaymentRepository,
-    private kakfaService: AbstractKafkaService,
+    /* private kakfaService: AbstractKafkaService, */
   ) {}
 
   async execute({
@@ -27,13 +27,13 @@ export class WebhookPaymentConfirmation {
     payment.pay();
     await this.paymentRepository.save(payment);
 
-    this.kakfaService.sendEvent({
+    /* this.kakfaService.sendEvent({
       eventName: 'Payment',
       data: {
         paymentId: payment.id,
         orderId: payment.orderId,
         userId: payment.userId,
       },
-    });
+    }); */
   }
 }
