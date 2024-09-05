@@ -9,9 +9,28 @@ import {
   AbstractExternalPaymentProvider,
   ExternalPaymentProviderFake,
 } from 'src/application/services/externalPaymentProvider';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
-  imports: [DatabaseModule, ServiceModule],
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'KAFKA_CONSUMER',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'payment',
+            brokers: [`${process.env.KAFKA_HOST}:${process.env.KAFKA_PORT}`],
+          },
+          consumer: {
+            groupId: 'payment-consumer',
+          },
+        },
+      },
+    ]),
+    DatabaseModule,
+    ServiceModule,
+  ],
   providers: [
     CreatePaymentUseCase,
     WebhookPaymentConfirmation,
