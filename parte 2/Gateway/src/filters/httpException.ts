@@ -4,11 +4,11 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { Response } from 'express';
-import { NotFoundError } from 'rxjs';
-import { AlreadyCreatedError } from 'src/errors/alreadyCreated';
-import { WrongValueError } from 'src/errors/wrongValue';
+} from "@nestjs/common";
+import { Response } from "express";
+import { NotFoundError } from "rxjs";
+import { AlreadyCreatedError } from "src/errors/alreadyCreated";
+import { WrongValueError } from "src/errors/wrongValue";
 
 type ICustomError = Error & {
   message: string;
@@ -21,12 +21,13 @@ export class CustomExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    console.log({ exception });
-
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-    if (!(exception instanceof HttpException))
-      status = exception?.status || HttpStatus.INTERNAL_SERVER_ERROR;
+    if (
+      !(exception instanceof HttpException) &&
+      Number.isInteger(exception?.status)
+    )
+      status = exception?.status;
 
     const message =
       exception instanceof HttpException

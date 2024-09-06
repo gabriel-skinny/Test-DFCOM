@@ -69,7 +69,7 @@ export class PaymentController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: 'Orders from user',
+      message: 'Payments from user',
       data: { payments },
     };
   }

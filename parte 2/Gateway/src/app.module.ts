@@ -1,18 +1,25 @@
-import { Module } from '@nestjs/common';
-import 'dotenv/config';
-import { ClientController } from './controllers/client.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ServiceModule } from './auth/services.module';
-import { EventController } from './controllers/event.controller';
-import { OrderController } from './controllers/order.controller';
-import { PaymentController } from './controllers/payment.controller';
+import { Module } from "@nestjs/common";
+import "dotenv/config";
+import { ClientController } from "./controllers/client.controller";
+import { ClientsModule, Transport } from "@nestjs/microservices";
+import { ServiceModule } from "./auth/services.module";
+import { EventController } from "./controllers/event.controller";
+import { OrderController } from "./controllers/order.controller";
+import { PaymentController } from "./controllers/payment.controller";
 
 const services = [
-  'CLIENT_SERVICE',
-  'EVENT_SERVICE',
-  'ORDER_SERVICE',
-  'PAYMENT_SERVICE',
+  "CLIENT_SERVICE",
+  "EVENT_SERVICE",
+  "ORDER_SERVICE",
+  "PAYMENT_SERVICE",
 ];
+
+console.log({
+  client: {
+    host: process.env[`CLIENT_SERVICE_HOST`],
+    port: Number(process.env[`CLIENT_SERVICE_PORT`]),
+  },
+});
 
 @Module({
   imports: [
@@ -24,7 +31,7 @@ const services = [
           host: process.env[`${serviceName}_HOST`],
           port: Number(process.env[`${serviceName}_PORT`]),
         },
-      })),
+      }))
     ),
     ServiceModule,
   ],

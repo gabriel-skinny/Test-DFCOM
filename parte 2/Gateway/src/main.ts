@@ -1,8 +1,8 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
 
-import { CustomExceptionFilter } from './filters/httpException';
+import { CustomExceptionFilter } from "./filters/httpException";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +10,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new CustomExceptionFilter());
 
-  await app.listen(4000);
+  await app.listen(process.env.GATEWAY_PORT);
 }
 bootstrap();
