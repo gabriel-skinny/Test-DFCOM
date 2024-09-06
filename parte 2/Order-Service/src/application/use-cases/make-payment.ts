@@ -3,7 +3,7 @@ import { OrderStatusEnum } from '../entities/status';
 import { AbstractOderRepository } from '../repositories/orderRepository';
 import { AbstractPaymentService } from '../services/Payment';
 import { WrongValueError } from '../errors/wrongValue';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka, ClientProxy } from '@nestjs/microservices';
 
 interface IUpdateOrderStatusUseCaseParams {
   orderId: string;
@@ -17,8 +17,8 @@ interface IUpdateOrderStatusUseCaseParams {
 export default class MakePaymentUseCase {
   constructor(
     private orderRepository: AbstractOderRepository,
-    @Inject('PAYMENT_SERVICE')
-    private paymentService: ClientProxy,
+    @Inject('KAFKA_SERVICE')
+    private kafkaService: ClientKafka,
   ) {}
 
   async execute({
@@ -46,6 +46,6 @@ export default class MakePaymentUseCase {
       value: pendentOrder.value,
     };
 
-    this.paymentService.send({ cmd: 'create-payment' }, createPaymentData);
+    this.kafkaService.emit('create-payment', createPaymentData);
   }
 }

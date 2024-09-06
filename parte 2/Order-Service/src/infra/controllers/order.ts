@@ -1,6 +1,6 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Transport } from '@nestjs/microservices';
 import { OrderStatusEnum } from 'src/application/entities/status';
 import { GetOrdersByUserIdUseCase } from 'src/application/use-cases/get-orders-by-user-id';
 import MakePaymentUseCase from 'src/application/use-cases/make-payment';
@@ -23,7 +23,7 @@ export class OrderController {
     private readonly getOrdersByUserIdUseCase: GetOrdersByUserIdUseCase,
   ) {}
 
-  /* @MessagePattern({ cmd: 'make-payment' }) */
+  @MessagePattern({ cmd: 'make-payment' }, Transport.TCP)
   async makePayment({
     userId,
     orderId,
@@ -44,7 +44,7 @@ export class OrderController {
     };
   }
 
-  /*  @MessagePattern({ cmd: 'get-many-by-user' }) */
+  @MessagePattern({ cmd: 'get-many-by-user' }, Transport.TCP)
   async getOrdersByUserId({
     userId,
     page,

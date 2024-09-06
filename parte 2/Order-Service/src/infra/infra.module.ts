@@ -18,11 +18,16 @@ import { GetOrdersByUserIdUseCase } from 'src/application/use-cases/get-orders-b
     DatabaseModule,
     ClientsModule.register([
       {
-        name: 'PAYMENT_SERVICE',
-        transport: Transport.TCP,
+        name: 'KAFKA_SERVICE',
+        transport: Transport.KAFKA,
         options: {
-          host: process.env.PAYMENT_SERVICE_HOST,
-          port: Number(process.env.PAYMENT_SERVICE_PORT),
+          client: {
+            clientId: 'order-service',
+            brokers: [`${process.env.KAFKA_HOST}:${process.env.KAFKA_PORT}`],
+          },
+          consumer: {
+            groupId: 'order-cosumer',
+          },
         },
       },
     ]),
