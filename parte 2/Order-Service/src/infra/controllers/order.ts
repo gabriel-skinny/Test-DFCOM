@@ -1,11 +1,12 @@
-import { Controller, HttpStatus } from '@nestjs/common';
+import { Controller, HttpStatus } from "@nestjs/common";
 
-import { MessagePattern, Transport } from '@nestjs/microservices';
-import { OrderStatusEnum } from 'src/application/entities/status';
-import { GetOrdersByUserIdUseCase } from 'src/application/use-cases/get-orders-by-user-id';
-import MakePaymentUseCase from 'src/application/use-cases/make-payment';
-import UpdateOrderStatusUseCase from 'src/application/use-cases/update-order-status';
-import { IOrderViewModel, OrderViewModel } from '../view-models/order';
+import { EventPattern, MessagePattern, Transport } from "@nestjs/microservices";
+import { OrderStatusEnum } from "src/application/entities/status";
+import { GetOrdersByUserIdUseCase } from "src/application/use-cases/get-orders-by-user-id";
+import MakePaymentUseCase from "src/application/use-cases/make-payment";
+import UpdateOrderStatusUseCase from "src/application/use-cases/update-order-status";
+import { IOrderViewModel, OrderViewModel } from "../view-models/order";
+import { CreateOrderUseCase } from "src/application/use-cases/create-order";
 
 interface IMakePaymentParams {
   orderId: string;
@@ -15,15 +16,20 @@ interface IMakePaymentParams {
   creditCardSecurityNumber: string;
 }
 
+interface ICreateOrderParams {
+  value: { ticketId: string; ticketValue: number; userId: string };
+}
+
 @Controller()
 export class OrderController {
   constructor(
     private readonly makePaymentUseCase: MakePaymentUseCase,
     private readonly updateStatusOrderUseCase: UpdateOrderStatusUseCase,
     private readonly getOrdersByUserIdUseCase: GetOrdersByUserIdUseCase,
+    private readonly createOrderUseCase: CreateOrderUseCase
   ) {}
 
-  @MessagePattern({ cmd: 'make-payment' }, Transport.TCP)
+  @MessagePattern({ cmd: "make-payment" }, Transport.TCP)
   async makePayment({
     userId,
     orderId,
@@ -40,11 +46,11 @@ export class OrderController {
     });
 
     return {
-      message: 'Payment sent',
+      message: "Payment sent",
     };
   }
 
-  @MessagePattern({ cmd: 'get-many-by-user' }, Transport.TCP)
+  @MessagePattern({ cmd: "get-many-by-user" }, Transport.TCP)
   async getOrdersByUserId({
     userId,
     page,
@@ -69,6 +75,18 @@ export class OrderController {
     await this.updateStatusOrderUseCase.execute({
       newStatus: OrderStatusEnum.PAYED,
       orderId,
+    });
+  }
+
+  @EventPattern("create-order")
+  async createOrder(data: ICreateOrderParams) {
+    const { ticketId, ticketValue, userId } = data.value;
+    console.log("Create-order", data);
+
+    await this.createOrderUseCase.execute({
+      ticketId,
+      ticketValue,
+      userId,
     });
   }
 }
