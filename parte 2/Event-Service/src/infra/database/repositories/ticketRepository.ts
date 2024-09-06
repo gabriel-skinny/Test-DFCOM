@@ -1,15 +1,15 @@
-import { Model, Model as MongoModel } from 'mongoose';
-import { Ticket } from '../../../application/entities/ticket';
-import { AbstractTicketRepository } from '../../../application/repositories/ticketRepository';
-import { TicketModel } from '../entities/ticket';
-import { TicketMapper } from '../mappers/ticket';
-import { InjectModel } from '@nestjs/mongoose';
-import { Injectable } from '@nestjs/common';
+import { Model, Model as MongoModel } from "mongoose";
+import { Ticket } from "../../../application/entities/ticket";
+import { AbstractTicketRepository } from "../../../application/repositories/ticketRepository";
+import { TicketModel } from "../entities/ticket";
+import { TicketMapper } from "../mappers/ticket";
+import { InjectModel } from "@nestjs/mongoose";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export default class TicketRepository implements AbstractTicketRepository {
   constructor(
-    @InjectModel(TicketModel.name) private ticketModel: Model<TicketModel>,
+    @InjectModel(TicketModel.name) private ticketModel: Model<TicketModel>
   ) {}
 
   async save(ticket: Ticket): Promise<void> {
@@ -39,6 +39,7 @@ export default class TicketRepository implements AbstractTicketRepository {
   async findTicketAvailableByEventId(eventId: string): Promise<Ticket | null> {
     const ticketModel = await this.ticketModel.findOne({
       eventId,
+      isAvailable: true,
     });
 
     if (!ticketModel) return null;

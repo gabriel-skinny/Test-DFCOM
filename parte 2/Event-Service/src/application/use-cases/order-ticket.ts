@@ -1,8 +1,9 @@
-import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable } from '@nestjs/common';
-import { Queue } from 'bullmq';
-import { AbstractTicketRepository } from '../repositories/ticketRepository';
-import { NotFoundError } from '../errors/notFound';
+import { InjectQueue } from "@nestjs/bullmq";
+import { Inject, Injectable } from "@nestjs/common";
+import { Queue } from "bullmq";
+import { AbstractTicketRepository } from "../repositories/ticketRepository";
+import { NotFoundError } from "../errors/notFound";
+import { ClientKafka } from "@nestjs/microservices";
 
 interface IOrderTicketUseCaseCaseParams {
   eventId: string;
@@ -17,8 +18,8 @@ interface IOrderTicketUseCaseReturn {
 export class OrderTicketUseCaseCase {
   constructor(
     private ticketRepository: AbstractTicketRepository,
-    @InjectQueue('order-queue')
-    private orderQeue: Queue,
+    @Inject("KAFKA_SERVICE")
+    private kafkaService: ClientKafka
   ) {}
 
   async execute({
@@ -28,9 +29,9 @@ export class OrderTicketUseCaseCase {
     const ticketAvailable =
       await this.ticketRepository.findTicketAvailableByEventId(eventId);
     if (!ticketAvailable)
-      throw new NotFoundError('Event does not have available tickets anymore');
+      throw new NotFoundError("Event does not have available tickets anymore");
 
-    await this.orderQeue.add('create-order', {
+    this.kafkaService.emit("create-order", {
       ticketId: ticketAvailable.id,
       ticketValue: ticketAvailable.price,
       userId,
