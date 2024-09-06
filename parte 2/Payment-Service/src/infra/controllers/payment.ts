@@ -1,20 +1,22 @@
-import { Controller, HttpStatus } from '@nestjs/common';
-import { EventPattern, MessagePattern, Transport } from '@nestjs/microservices';
-import { CreatePaymentUseCase } from 'src/application/use-cases/create';
-import { GetPaymentsByUserIdUseCase } from 'src/application/use-cases/get-payments-by-user-id';
-import { WebhookPaymentConfirmation } from 'src/application/use-cases/webhook-payment-confirmation';
+import { Controller, HttpStatus } from "@nestjs/common";
+import { EventPattern, MessagePattern, Transport } from "@nestjs/microservices";
+import { CreatePaymentUseCase } from "src/application/use-cases/create";
+import { GetPaymentsByUserIdUseCase } from "src/application/use-cases/get-payments-by-user-id";
+import { WebhookPaymentConfirmation } from "src/application/use-cases/webhook-payment-confirmation";
 import {
   IPaymentViewModel,
   PaymentViewModel,
-} from '../viewModel/payment-view-model';
+} from "../viewModel/payment-view-model";
 
 interface ICreatePaymentParams {
-  orderId: string;
-  userId: string;
-  creditCardNumber: string;
-  creditCardSecurityNumber: string;
-  creditCardExpirationDate: string;
-  value: number;
+  value: {
+    orderId: string;
+    userId: string;
+    creditCardNumber: string;
+    creditCardSecurityNumber: string;
+    creditCardExpirationDate: string;
+    value: number;
+  };
 }
 
 @Controller()
@@ -22,17 +24,18 @@ export class PaymentController {
   constructor(
     private readonly createPaymentUseCase: CreatePaymentUseCase,
     private readonly webhookPaymentConfirmationUseCase: WebhookPaymentConfirmation,
-    private readonly getPaymentsByUserIdUseCase: GetPaymentsByUserIdUseCase,
+    private readonly getPaymentsByUserIdUseCase: GetPaymentsByUserIdUseCase
   ) {}
 
-  @EventPattern('create-payment', Transport.KAFKA)
+  @EventPattern("create-payment")
   async create(data: ICreatePaymentParams): Promise<{ paymentId: string }> {
-    const { paymentId } = await this.createPaymentUseCase.execute(data);
+    console.log({ data });
+    const { paymentId } = await this.createPaymentUseCase.execute(data.value);
 
     return { paymentId };
   }
 
-  @MessagePattern({ cmd: 'get-many-by-user' }, Transport.TCP)
+  @MessagePattern({ cmd: "get-many-by-user" }, Transport.TCP)
   async getManyByUserId({
     userId,
     perPage,
@@ -51,7 +54,7 @@ export class PaymentController {
     return { payments: payments.map(PaymentViewModel.toHttp) };
   }
 
-  @MessagePattern({ cmd: 'webhook-payment-confirmation' }, Transport.TCP)
+  @MessagePattern({ cmd: "webhook-payment-confirmation" }, Transport.TCP)
   async webhookPaymentConfirmation({ externalId }: { externalId: string }) {
     await this.webhookPaymentConfirmationUseCase.execute({
       externalId,
@@ -59,7 +62,7 @@ export class PaymentController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: 'Payment confirmed',
+      message: "Payment confirmed",
     };
   }
 }

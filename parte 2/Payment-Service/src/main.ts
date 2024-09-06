@@ -1,9 +1,8 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { CustomExceptionFilter } from './infra/filters/httpException';
-import { randomUUID } from 'crypto';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { ValidationPipe } from "@nestjs/common";
+import { MicroserviceOptions, Transport } from "@nestjs/microservices";
+import { CustomExceptionFilter } from "./infra/filters/httpException";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,8 +10,8 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: process.env.SERVICE_HOST,
-      port: Number(process.env.SERVICE_PORT),
+      host: process.env.PAYMENT_SERVICE_HOST,
+      port: Number(process.env.PAYMENT_SERVICE_PORT),
     },
   });
 
@@ -20,7 +19,11 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
+        clientId: "payment_service",
         brokers: [`${process.env.KAFKA_HOST}:${process.env.KAFKA_PORT}`],
+      },
+      consumer: {
+        groupId: "consumer",
       },
     },
   });
