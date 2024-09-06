@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AbstractPaymentRepository } from '../repositories/paymentRepository';
 import { AbstractKafkaService } from '../services/kafkaService';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka, ClientProxy } from '@nestjs/microservices';
 
 interface IWebhookPaymentConfirmationParams {
   externalId: string;
@@ -11,8 +11,8 @@ interface IWebhookPaymentConfirmationParams {
 export class WebhookPaymentConfirmation {
   constructor(
     private paymentRepository: AbstractPaymentRepository,
-    @Inject('KAFKA_CONSUMER')
-    private kakfaService: ClientProxy,
+    @Inject('KAFKA_SERVICE')
+    private kakfaService: ClientKafka,
   ) {}
 
   async execute({

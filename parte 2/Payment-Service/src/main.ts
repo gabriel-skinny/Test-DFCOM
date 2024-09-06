@@ -20,7 +20,7 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [`localhost:${process.env.KAFKA_PORT}`],
+        brokers: [`${process.env.KAFKA_HOST}:${process.env.KAFKA_PORT}`],
       },
     },
   });
