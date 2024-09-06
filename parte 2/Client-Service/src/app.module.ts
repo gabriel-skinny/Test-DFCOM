@@ -1,10 +1,9 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { MongooseModule } from '@nestjs/mongoose';
-import 'dotenv/config';
-import { DatabaseModule } from './infra/database/database.module';
-import { InfraModule } from './infra/infra.module';
-import { ServiceModule } from './infra/services/services.module';
+import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
+import { MongooseModule } from "@nestjs/mongoose";
+import "dotenv/config";
+import { DatabaseModule } from "./infra/database/database.module";
+import { InfraModule } from "./infra/infra.module";
 
 const mongoUrl = `mongodb://${process.env.MONGO_DB_HOST}:${process.env.MONGODB_LOCAL_PORT}/${process.env.MONGODB_DB_NAME}?authSource=admin`;
 
@@ -14,11 +13,10 @@ const mongoUrl = `mongodb://${process.env.MONGO_DB_HOST}:${process.env.MONGODB_L
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: "1d" },
     }),
     InfraModule,
     DatabaseModule,
-    ServiceModule,
   ],
   controllers: [],
   providers: [],
