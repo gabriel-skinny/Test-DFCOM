@@ -1,8 +1,9 @@
 import { Controller } from "@nestjs/common";
 
-import { MessagePattern, Transport } from "@nestjs/microservices";
+import { EventPattern, MessagePattern, Transport } from "@nestjs/microservices";
 import { GetManyEventsUseCase } from "../../application/use-cases/get-many-events";
 import { OrderTicketUseCaseCase } from "../../application/use-cases/order-ticket";
+import { BuyTicketUseCase } from "src/application/use-cases/buy-ticket";
 
 interface IOrderTicketParams {
   eventId: string;
@@ -14,11 +15,16 @@ interface IGetManyParams {
   page: number;
 }
 
+interface IPayoutTicketParams {
+  value: { ticketId: string; orderId: string; userId: string };
+}
+
 @Controller()
 export class EventController {
   constructor(
     private readonly getManyEventsUseCase: GetManyEventsUseCase,
-    private readonly orderTicketUseCase: OrderTicketUseCaseCase
+    private readonly orderTicketUseCase: OrderTicketUseCaseCase,
+    private readonly buyTicketUseCase: BuyTicketUseCase
   ) {}
 
   @MessagePattern({ cmd: "get-many-events" }, Transport.TCP)
@@ -36,5 +42,13 @@ export class EventController {
     });
 
     return { ticketId };
+  }
+
+  @EventPattern("order-payed")
+  async payTicket(data: IPayoutTicketParams) {
+    await this.buyTicketUseCase.execute({
+      ticketId: data.value.ticketId,
+      userId: data.value.userId,
+    });
   }
 }

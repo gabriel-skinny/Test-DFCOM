@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:latest
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - db:/data/db
+
+  redis:
+    image: redis/redis-stack-server
+    ports:
+      - "${REDIS_DESKTOP_PORT}:${REDIS_PORT}"
+
+  broker:
+    image: apache/kafka:3.8.0
+    container_name: broker
+    ports:
+      - ${KAFKA_PORT}:${KAFKA_PORT}
+
+  gateway:
+    build: "./Gateway"
+    hostname: gateway
+    env_file:
+      - .env
+    ports:
+      - ${GATEWAY_PORT}:${GATEWAY_PORT}
+
+  order-service:
+    build: "./Order-Service"
+    hostname: order-service
+    depends_on:
+      - redis
+      - broker
+      - mongodb
+    env_file:
+      - .env
+    ports:
+      - ${ORDER_SERVICE_PORT}:${ORDER_SERVICE_PORT}
+
+  event-service:
+    build: "./Event-Service"
+    hostname: event-service
+    depends_on:
+      - redis
+      - broker
+      - mongodb
+    env_file:
+      - .env
+    ports:
+      - ${EVENT_SERVICE_PORT}:${EVENT_SERVICE_PORT}
+
+  client-service:
+    build: "./Client-Service"
+    hostname: client-service
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+    ports:
+      - ${CLIENT_SERVICE_PORT}:${CLIENT_SERVICE_PORT}
+
+  payment-service:
+    build: "./Payment-Service"
+    depends_on:
+      - broker
+      - mongodb
+    hostname: payment-service
+    env_file:
+      - .env
+    ports:
+      - ${PAYMENT_SERVICE_PORT}:${PAYMENT_SERVICE_PORT}
+volumes:
+  db:

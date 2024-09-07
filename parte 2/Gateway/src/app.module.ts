@@ -14,13 +14,6 @@ const services = [
   "PAYMENT_SERVICE",
 ];
 
-console.log({
-  client: {
-    host: process.env[`CLIENT_SERVICE_HOST`],
-    port: Number(process.env[`CLIENT_SERVICE_PORT`]),
-  },
-});
-
 @Module({
   imports: [
     ClientsModule.register(

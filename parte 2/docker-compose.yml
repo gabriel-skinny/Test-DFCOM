@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mongodb:
@@ -11,9 +11,13 @@ services:
 
   redis:
     image: redis/redis-stack-server
-    restart: always
     ports:
-      - '${REDIS_DESKTOP_PORT}:${REDIS_PORT}'
+      - "${REDIS_DESKTOP_PORT}:${REDIS_PORT}"
 
+  broker:
+    image: apache/kafka:3.8.0
+    container_name: broker
+    ports:
+      - ${KAFKA_PORT}:${KAFKA_PORT}
 volumes:
   db:
