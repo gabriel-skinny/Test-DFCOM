@@ -2,9 +2,9 @@
 
 Resolução para os 3 testes para a DFCom
 
-- [Parte 1](#parte-1)
-- [Parte 2](https://github.com/gabriel-skinny/Test-DFCOM/tree/master/parte%202)
-- [Parte 3](https://github.com/gabriel-skinny/Test-DFCOM/tree/master/parte%203)
+- [Parte 1 - Solução](#parte-1) ()
+- [Parte 2 - Implementação da Solução](https://github.com/gabriel-skinny/Test-DFCOM/tree/master/parte%202)
+- [Parte 3 - Refatoração](https://github.com/gabriel-skinny/Test-DFCOM/tree/master/parte%203) ()
 
 ## Parte 1
 
@@ -145,13 +145,6 @@ Databases
 - Database: Mongo
 
 #### Comprar ticket de evento
-
-- Service: Order-Service
-- Client: Http
-- Api: confirmPayment(orderId, userId)
-
-  - Verifica se essa ordem está "Em pagamento"
-  - Chama rota para fazer pagamento do Payment-Service
 
 - Service: Payment-Service
 - Client: Http
