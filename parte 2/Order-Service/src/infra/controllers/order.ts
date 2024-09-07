@@ -16,6 +16,10 @@ interface IMakePaymentParams {
   creditCardSecurityNumber: string;
 }
 
+interface IPayoutorderParams {
+  value: { paymentId: string; orderId: string; userId: string };
+}
+
 interface ICreateOrderParams {
   value: { ticketId: string; ticketValue: number; userId: string };
 }
@@ -71,13 +75,6 @@ export class OrderController {
     };
   }
 
-  async paymentConfirmation(orderId: string) {
-    await this.updateStatusOrderUseCase.execute({
-      newStatus: OrderStatusEnum.PAYED,
-      orderId,
-    });
-  }
-
   @EventPattern("create-order")
   async createOrder(data: ICreateOrderParams) {
     const { ticketId, ticketValue, userId } = data.value;
@@ -87,6 +84,15 @@ export class OrderController {
       ticketId,
       ticketValue,
       userId,
+    });
+  }
+
+  @EventPattern("payment-confirmed")
+  async payoutOrder(data: IPayoutorderParams) {
+    console.log({ data, payment: "payment" });
+    await this.updateStatusOrderUseCase.execute({
+      newStatus: OrderStatusEnum.PAYED,
+      orderId: data.value.orderId,
     });
   }
 }

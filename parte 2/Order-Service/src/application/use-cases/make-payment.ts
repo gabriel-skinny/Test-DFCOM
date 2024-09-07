@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { OrderStatusEnum } from '../entities/status';
-import { AbstractOderRepository } from '../repositories/orderRepository';
-import { AbstractPaymentService } from '../services/Payment';
-import { WrongValueError } from '../errors/wrongValue';
-import { ClientKafka, ClientProxy } from '@nestjs/microservices';
+import { Inject, Injectable } from "@nestjs/common";
+import { OrderStatusEnum } from "../entities/status";
+import { AbstractOderRepository } from "../repositories/orderRepository";
+import { AbstractPaymentService } from "../services/Payment";
+import { WrongValueError } from "../errors/wrongValue";
+import { ClientKafka, ClientProxy } from "@nestjs/microservices";
 
 interface IUpdateOrderStatusUseCaseParams {
   orderId: string;
@@ -17,8 +17,8 @@ interface IUpdateOrderStatusUseCaseParams {
 export default class MakePaymentUseCase {
   constructor(
     private orderRepository: AbstractOderRepository,
-    @Inject('KAFKA_SERVICE')
-    private kafkaService: ClientKafka,
+    @Inject("KAFKA_SERVICE")
+    private kafkaService: ClientKafka
   ) {}
 
   async execute({
@@ -35,7 +35,7 @@ export default class MakePaymentUseCase {
     });
 
     if (!pendentOrder)
-      throw new WrongValueError('Order already payed or canceled');
+      throw new WrongValueError("Order already payed or canceled");
 
     const createPaymentData = {
       creditCardExpirationDate,
@@ -43,9 +43,9 @@ export default class MakePaymentUseCase {
       creditCardSecurityNumber,
       orderId,
       userId,
-      value: pendentOrder.value,
+      valueNumber: pendentOrder.value,
     };
 
-    this.kafkaService.emit('create-payment', createPaymentData);
+    this.kafkaService.emit("create-payment-new", createPaymentData);
   }
 }

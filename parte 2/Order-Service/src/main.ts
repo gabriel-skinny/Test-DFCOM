@@ -19,11 +19,10 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        clientId: "order-service",
         brokers: [`${process.env.KAFKA_HOST}:${process.env.KAFKA_PORT}`],
       },
-      consumer: {
-        groupId: "consumer",
+      subscribe: {
+        fromBeginning: true,
       },
     },
   });

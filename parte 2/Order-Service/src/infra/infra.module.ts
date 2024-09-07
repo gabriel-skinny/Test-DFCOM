@@ -22,7 +22,7 @@ import { GetOrdersByUserIdUseCase } from "src/application/use-cases/get-orders-b
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: "order-service",
+            clientId: "order-service-producer",
             brokers: [`${process.env.KAFKA_HOST}:${process.env.KAFKA_PORT}`],
           },
           consumer: {
