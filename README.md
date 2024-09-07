@@ -2,9 +2,9 @@
 
 Resolução para os 3 testes para a DFCom
 
-- [Parte 1 - Solução](#parte-1) ()
+- [Parte 1 - Solução](#parte-1)
 - [Parte 2 - Implementação da Solução](https://github.com/gabriel-skinny/Test-DFCOM/tree/master/parte%202)
-- [Parte 3 - Refatoração](https://github.com/gabriel-skinny/Test-DFCOM/tree/master/parte%203) ()
+- [Parte 3 - Refatoração](https://github.com/gabriel-skinny/Test-DFCOM/tree/master/parte%203)
 
 ## Parte 1
 
