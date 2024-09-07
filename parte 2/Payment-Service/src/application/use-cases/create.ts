@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { Payment } from '../entities/payment';
-import { AbstractPaymentRepository } from '../repositories/paymentRepository';
-import { AbstractExternalPaymentProvider } from '../services/externalPaymentProvider';
+import { Injectable } from "@nestjs/common";
+import { Payment } from "../entities/payment";
+import { AbstractPaymentRepository } from "../repositories/paymentRepository";
+import { AbstractExternalPaymentProvider } from "../services/externalPaymentProvider";
 
 interface IPaymentUseCaseParams {
   orderId: string;
@@ -20,7 +20,7 @@ interface IPaymentUseCaseReturn {
 export class CreatePaymentUseCase {
   constructor(
     private externalPaymentProvider: AbstractExternalPaymentProvider,
-    private paymentRepository: AbstractPaymentRepository,
+    private paymentRepository: AbstractPaymentRepository
   ) {}
 
   async execute({

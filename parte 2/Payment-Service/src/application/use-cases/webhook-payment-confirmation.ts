@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { AbstractPaymentRepository } from '../repositories/paymentRepository';
-import { AbstractKafkaService } from '../services/kafkaService';
-import { ClientKafka, ClientProxy } from '@nestjs/microservices';
+import { Inject, Injectable } from "@nestjs/common";
+import { AbstractPaymentRepository } from "../repositories/paymentRepository";
+import { AbstractKafkaService } from "../services/kafkaService";
+import { ClientKafka, ClientProxy } from "@nestjs/microservices";
 
 interface IWebhookPaymentConfirmationParams {
   externalId: string;
@@ -11,8 +11,8 @@ interface IWebhookPaymentConfirmationParams {
 export class WebhookPaymentConfirmation {
   constructor(
     private paymentRepository: AbstractPaymentRepository,
-    @Inject('KAFKA_SERVICE')
-    private kakfaService: ClientKafka,
+    @Inject("KAFKA_SERVICE")
+    private kakfaService: ClientKafka
   ) {}
 
   async execute({
@@ -22,14 +22,18 @@ export class WebhookPaymentConfirmation {
       await this.paymentRepository.findPendentByExternalId(externalId);
 
     if (!payment) {
-      console.log('Webhook de pagamento não achou correspondente');
+      console.log("Webhook de pagamento não achou correspondente");
       return;
     }
 
     payment.pay();
-    await this.paymentRepository.save(payment);
+    console.log({ payment });
+    await this.paymentRepository.updateById({
+      id: payment.id,
+      data: { status: payment.status },
+    });
 
-    this.kakfaService.emit('payment-confirmed', {
+    this.kakfaService.emit("payment-confirmed", {
       paymentId: payment.id,
       orderId: payment.orderId,
       userId: payment.userId,

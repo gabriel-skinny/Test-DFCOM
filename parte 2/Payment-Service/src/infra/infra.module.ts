@@ -11,6 +11,8 @@ import {
 } from "src/application/services/externalPaymentProvider";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 
+import "dotenv/config";
+
 @Module({
   imports: [
     ClientsModule.register([
@@ -19,7 +21,7 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: "payment_service",
+            clientId: "payment-service-consumer",
             brokers: [`${process.env.KAFKA_HOST}:${process.env.KAFKA_PORT}`],
           },
           consumer: {

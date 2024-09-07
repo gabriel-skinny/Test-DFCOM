@@ -9,14 +9,12 @@ import {
 } from "../viewModel/payment-view-model";
 
 interface ICreatePaymentParams {
-  value: {
-    orderId: string;
-    userId: string;
-    creditCardNumber: string;
-    creditCardSecurityNumber: string;
-    creditCardExpirationDate: string;
-    value: number;
-  };
+  orderId: string;
+  userId: string;
+  creditCardNumber: string;
+  creditCardSecurityNumber: string;
+  creditCardExpirationDate: string;
+  valueNumber: number;
 }
 
 @Controller()
@@ -27,10 +25,17 @@ export class PaymentController {
     private readonly getPaymentsByUserIdUseCase: GetPaymentsByUserIdUseCase
   ) {}
 
-  @EventPattern("create-payment")
+  @EventPattern("create-payment-new")
   async create(data: ICreatePaymentParams): Promise<{ paymentId: string }> {
     console.log({ data });
-    const { paymentId } = await this.createPaymentUseCase.execute(data.value);
+    const { paymentId } = await this.createPaymentUseCase.execute({
+      creditCardExpirationDate: data.creditCardExpirationDate,
+      creditCardNumber: data.creditCardNumber,
+      creditCardSecurityNumber: data.creditCardSecurityNumber,
+      orderId: data.orderId,
+      userId: data.userId,
+      value: data.valueNumber,
+    });
 
     return { paymentId };
   }
