@@ -1,43 +1,44 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
 interface IPropsEvent {
   id?: string;
   name: string;
   ticketNumber: number;
+  availableTickets?: number;
+  creatorId: number;
   publishedDate: Date;
   endSellingDate: Date;
+  available?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
 
 export class Event {
-  private _id: string;
+  private id: string;
   readonly name: string;
   readonly ticketNumber: number;
+  readonly availableTickets: number;
+  readonly creatorId: number;
   readonly publishedDate: Date;
   readonly endSellingDate: Date;
-  private _createdAt: Date;
+  readonly available: boolean;
+  private createdAt: Date;
   readonly updatedAt?: Date;
   readonly deletedAt?: Date;
 
   constructor(props: IPropsEvent) {
-    this._id = props.id || randomUUID();
+    this.id = props.id || randomUUID();
     this.name = props.name;
     this.ticketNumber = props.ticketNumber;
+    this.availableTickets = props.availableTickets || props.ticketNumber;
+    this.creatorId = props.creatorId;
+    this.available = props.available || false;
     this.publishedDate = props.publishedDate;
     this.endSellingDate = props.endSellingDate;
 
-    this._createdAt = props.createdAt || new Date();
+    this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt;
     this.deletedAt = props.deletedAt;
-  }
-
-  public get id() {
-    return this._id;
-  }
-
-  public get createdAt() {
-    return this._createdAt;
   }
 }
