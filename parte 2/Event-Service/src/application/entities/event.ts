@@ -5,8 +5,8 @@ interface IPropsEvent {
   name: string;
   ticketNumber: number;
   availableTickets?: number;
-  creatorId: number;
-  publishedDate: Date;
+  creatorId: string;
+  publishedDate?: Date;
   endSellingDate: Date;
   available?: boolean;
   createdAt?: Date;
@@ -15,15 +15,15 @@ interface IPropsEvent {
 }
 
 export class Event {
-  private id: string;
+  readonly id: string;
   readonly name: string;
   readonly ticketNumber: number;
   readonly availableTickets: number;
-  readonly creatorId: number;
-  readonly publishedDate: Date;
+  readonly creatorId: string;
+  readonly publishedDate?: Date;
   readonly endSellingDate: Date;
   readonly available: boolean;
-  private createdAt: Date;
+  readonly createdAt: Date;
   readonly updatedAt?: Date;
   readonly deletedAt?: Date;
 

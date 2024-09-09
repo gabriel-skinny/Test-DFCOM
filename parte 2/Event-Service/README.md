@@ -10,10 +10,10 @@ User:
 
 Admin:
 
-- Consegue visualizar todos os eventos cadastrados
+- Consegue visualizar todos os eventos cadastrados com filtros
 - Consegue cadastrar eventos e tickets com valores especificos
 - Consegue deixar um evento disponivel para compra
-- Consegue editar valores de tickets
+- Consegue editar valores de tickets de um evento
 - Consegue deixar um evento indisponivel
 - Consegue deletar um evento
 
@@ -44,7 +44,7 @@ ticket:
 
 - id
 - price (int)
-  eventId(uuid)
+- eventId(uuid)
 - type (string)
 - buyed (boolean)
 - buyerId (int)

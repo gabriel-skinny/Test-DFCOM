@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
 interface IPropsTicket {
   id?: string;
@@ -6,6 +6,7 @@ interface IPropsTicket {
   buyed?: boolean;
   buyerId?: string;
   eventId: string;
+  type: string;
   isAvailable?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -13,35 +14,29 @@ interface IPropsTicket {
 }
 
 export class Ticket {
-  private _id: string;
+  readonly id: string;
   readonly price: number;
+  readonly type: string;
   private _buyed: boolean;
   private _buyerId: string;
   readonly eventId: string;
   private _isAvailable: boolean;
-  private _createdAt: Date;
+  readonly createdAt: Date;
   readonly updatedAt?: Date;
   readonly deletedAt?: Date;
 
   constructor(props: IPropsTicket) {
-    this._id = props.id || randomUUID();
+    this.id = props.id || randomUUID();
     this.price = props.price;
     this._buyed = props.buyed || false;
     this._buyerId = props.buyerId;
     this.eventId = props.eventId;
     this._isAvailable = props.isAvailable || true;
+    this.type = props.type;
 
-    this._createdAt = props.createdAt || new Date();
+    this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt;
     this.deletedAt = props.deletedAt;
-  }
-
-  public get id() {
-    return this._id;
-  }
-
-  public get createdAt() {
-    return this._createdAt;
   }
 
   public get isAvailable() {
@@ -57,7 +52,7 @@ export class Ticket {
   }
 
   public buy(buyerId: string) {
-    if (this._buyed) throw new Error('Ticket already buyed');
+    if (this._buyed) throw new Error("Ticket already buyed");
 
     this._buyed = true;
     this._buyerId = buyerId;
