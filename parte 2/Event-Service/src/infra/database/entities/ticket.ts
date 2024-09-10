@@ -1,9 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 
 export type TicketDocument = HydratedDocument<TicketModel>;
 
-@Schema({ collection: 'ticket' })
+@Schema({ collection: "ticket" })
 export class TicketModel {
   constructor(ticketModel: TicketModel) {
     Object.keys(ticketModel).map((key) => (this[key] = ticketModel[key]));
@@ -25,6 +25,9 @@ export class TicketModel {
 
   @Prop()
   buyerId: string;
+
+  @Prop()
+  type: string;
 
   @Prop()
   eventId: string;
