@@ -1,9 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 
 export type EventDocument = HydratedDocument<EventModel>;
 
-@Schema({ collection: 'event' })
+@Schema({ collection: "event" })
 export class EventModel {
   constructor(eventModel: EventDocument) {
     Object.keys(eventModel).map((key) => (this[key] = eventModel[key]));
@@ -24,13 +24,23 @@ export class EventModel {
   ticketNumber: number;
 
   @Prop()
+  availableTickets: number;
+
+  @Prop()
+  creatorId: string;
+
+  @Prop()
   publishedDate: Date;
 
   @Prop()
   endSellingDate: Date;
 
   @Prop()
+  available: boolean;
+
+  @Prop()
   createdAt: Date;
+
   @Prop()
   updatedAt?: Date;
 
