@@ -3,6 +3,7 @@ import { IPagination } from "./interface";
 
 export abstract class AbstractTicketRepository {
   abstract save(ticket: Ticket): Promise<void>;
+  abstract saveMany(tickets: Ticket[]): Promise<void>;
   abstract updateById(data: {
     id: string;
     updateData: Partial<Ticket>;

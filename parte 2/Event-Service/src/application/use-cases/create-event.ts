@@ -40,7 +40,7 @@ export class CreateEventUseCase {
       ticketNumber,
     });
 
-    const ticketToCreate: Ticket[] = [];
+    const ticketsToCreate: Array<Ticket> = [];
     for (const ticketGroup of ticketGroups) {
       for (let i = 0; i < ticketGroup.quantity; i++) {
         const ticket = new Ticket({
@@ -49,10 +49,13 @@ export class CreateEventUseCase {
           type: ticketGroup.type,
         });
 
-        ticketToCreate.push(ticket);
+        ticketsToCreate.push(ticket);
       }
     }
 
     await this.eventRepository.save(event);
+    await this.ticketRepository.saveMany(ticketsToCreate);
+
+    return { eventId: event.id };
   }
 }

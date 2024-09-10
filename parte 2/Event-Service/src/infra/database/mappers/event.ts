@@ -1,5 +1,5 @@
-import { Event } from '../../../application/entities/event';
-import { EventModel } from '../entities/event';
+import { Event } from "../../../application/entities/event";
+import { EventModel } from "../entities/event";
 
 export class EventMapper {
   static toDatabase(raw: Event): EventModel {
@@ -10,6 +10,9 @@ export class EventMapper {
       endSellingDate: raw.endSellingDate,
       publishedDate: raw.publishedDate,
       ticketNumber: raw.ticketNumber,
+      available: raw.available,
+      availableTickets: raw.availableTickets,
+      creatorId: raw.creatorId,
       createdAt: raw.createdAt,
       deletedAt: raw.deletedAt,
       updatedAt: raw.updatedAt,
@@ -23,6 +26,9 @@ export class EventMapper {
       endSellingDate: model.endSellingDate,
       publishedDate: model.publishedDate,
       ticketNumber: model.ticketNumber,
+      creatorId: model.creatorId,
+      available: model.available,
+      availableTickets: model.availableTickets,
       createdAt: model.createdAt,
       deletedAt: model.deletedAt,
       updatedAt: model.updatedAt,
